@@ -1,0 +1,42 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#020504"><title>Chat — DarkClaude</title><link rel="icon" href="images/darkgpt-mark.png"><link href="css/css2.css" rel="stylesheet"><link rel="stylesheet" href="css/dc-app.css"></head>
+<body class="dc-chat">
+<header class="dc-top"><a class="dc-logo" href="./index.html">Dark<span>Claude</span></a>
+<div class="dc-bar"><span id="plan" class="dc-muted"></span><a href="./pricing.html">Upgrade</a><a href="#" id="out">Déconnexion</a></div></header>
+<div class="dc-chatlog" id="log"><div class="dc-bubble a">Bienvenue. Je suis DarkClaude. Pose ta question.</div></div>
+<form class="dc-compose" id="f">
+<div class="dc-bar" style="width:100%"><select id="mode" aria-label="Mode"><option value="nolimit">No Limit</option><option value="code">Code</option><option value="analyse">Analyse</option></select>
+<label class="dc-btn dc-btn--ghost" style="padding:6px 12px;margin:0;cursor:pointer">Image<input id="img" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden></label><span id="imgn" class="dc-muted"></span><span id="err" class="dc-msg err" style="margin:0"></span></div>
+<textarea id="m" rows="1" placeholder="Écris ton message…" maxlength="4000"></textarea>
+<button class="dc-btn" id="go" type="submit">Envoyer</button></form>
+<script src="js/dc-common.js"></script>
+<script>
+const $ = (i) => document.getElementById(i);
+const log = $("log"), history = []; let image = null, busy = false;
+if (!DC.token()) location.replace("./auth.html?mode=login");
+const bubble = (cls, text) => { const d = document.createElement("div"); d.className = "dc-bubble " + cls; d.textContent = text; log.appendChild(d); log.scrollTop = log.scrollHeight; return d; };
+async function me() { try { const { user } = await DC.api("/api/auth/me"); localStorage.setItem("darkclaude_user", JSON.stringify(user)); $("plan").textContent = user.plan + " · " + user.dailyLimit + " msg/jour"; if (user.admin) $("plan").insertAdjacentHTML("afterend", ' <a href="./admin.html">Admin</a>'); } catch { DC.clear(); location.replace("./auth.html?mode=login"); } }
+$("out").onclick = async (e) => { e.preventDefault(); try { await DC.api("/api/auth/logout", { method: "POST" }); } catch {} DC.clear(); location.replace("./"); };
+$("img").onchange = (e) => { const f = e.target.files[0]; if (!f) return; if (f.size > 4 * 1024 * 1024) { $("err").textContent = "Image > 4 Mo"; return; }
+  const r = new FileReader(); r.onload = () => { image = { mime: f.type, dataUrl: r.result, name: f.name }; $("imgn").textContent = f.name; }; r.readAsDataURL(f); };
+$("m").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !/Mobi|Android/i.test(navigator.userAgent)) { e.preventDefault(); $("f").requestSubmit(); } });
+$("m").addEventListener("input", (e) => { e.target.style.height = "auto"; e.target.style.height = Math.min(e.target.scrollHeight, 160) + "px"; });
+$("f").onsubmit = async (e) => {
+  e.preventDefault(); if (busy) return; const text = $("m").value.trim(); if (!text && !image) return;
+  busy = true; $("go").disabled = true; $("err").textContent = "";
+  bubble("u", text || "(image)"); $("m").value = ""; $("m").style.height = "auto";
+  const out = bubble("a", "…"); let full = "";
+  const body = { message: text, mode: $("mode").value, lang: localStorage.getItem("darkclaude_lang") || "fr", stream: true, history: history.slice(-24) };
+  if (image) body.images = [image];
+  try {
+    const r = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json", "x-session-token": DC.token() }, body: JSON.stringify(body) });
+    if (!r.ok) { const d = await r.json().catch(() => ({})); const er = new Error(d.error || "Erreur"); er.status = r.status; throw er; }
+    const rd = r.body.getReader(), dec = new TextDecoder(); let buf = "";
+    for (;;) { const { done, value } = await rd.read(); if (done) break; buf += dec.decode(value, { stream: true });
+      let i; while ((i = buf.indexOf("\n")) >= 0) { const l = buf.slice(0, i).trim(); buf = buf.slice(i + 1); if (!l) continue;
+        const j = JSON.parse(l); if (j.error) throw new Error(j.error); if (j.delta) { full += j.delta; out.textContent = full; log.scrollTop = log.scrollHeight; } } }
+    history.push({ role: "user", content: text }, { role: "assistant", content: full }); image = null; $("imgn").textContent = ""; $("img").value = "";
+  } catch (er) { out.remove(); $("err").textContent = er.message; if (er.status === 401) { DC.clear(); location.replace("./auth.html?mode=login"); } if (er.status === 402) $("err").innerHTML = er.message + ' <a href="./pricing.html">Voir les plans</a>'; }
+  finally { busy = false; $("go").disabled = false; me(); }
+};
+me();
+</script></body></html>

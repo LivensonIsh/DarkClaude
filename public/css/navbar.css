@@ -1,0 +1,1078 @@
+/* DarkClaude — Navbar SaaS premium (rouge / noir) — identique sur toutes les pages */
+
+@import url("css2_1.css");
+
+:root {
+  --nav-red: #3bff96;
+  --nav-red-hot: #1cd573;
+  --nav-red-border: rgba(59, 255, 150, 0.14);
+  --nav-ink: #f5f5f7;
+  --nav-muted: #a6a6ae;
+  --nav-bg: rgba(6, 6, 7, 0.78);
+  --nav-bg-scroll: rgba(6, 6, 7, 0.92);
+  --nav-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --nav-font: "DM Sans", "Syne", system-ui, sans-serif;
+  --nav-display: "Unbounded", "Syne", sans-serif;
+}
+
+/* ── Shell flottant (toutes pages marketing / checkout / abonnement) ─ */
+
+body .topbar,
+body.page-home .topbar,
+body.page-pricing .topbar,
+body.page-features .topbar,
+body.page-compare .topbar,
+body.page-contact .topbar,
+body.page-legal .topbar,
+body.page-subscription .topbar,
+body.page-checkout .topbar {
+  position: sticky !important;
+  top: 16px !important;
+  z-index: 100 !important;
+  width: 95% !important;
+  max-width: 1280px !important;
+  height: 72px !important;
+  min-height: 72px !important;
+  margin: 16px auto 0 !important;
+  padding: 0 !important;
+  border-radius: 18px !important;
+  border: 1px solid var(--nav-red-border) !important;
+  border-bottom: 1px solid var(--nav-red-border) !important;
+  background: var(--nav-bg) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  box-shadow:
+    0 8px 28px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset !important;
+  transition:
+    background 280ms var(--nav-ease),
+    box-shadow 280ms var(--nav-ease),
+    top 280ms var(--nav-ease),
+    margin 280ms var(--nav-ease),
+    height 280ms var(--nav-ease),
+    min-height 280ms var(--nav-ease),
+    border-color 280ms ease,
+    backdrop-filter 280ms ease !important;
+  overflow: visible !important;
+  transform: none !important;
+  font-family: var(--nav-font) !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+body .topbar.topbar-scrolled,
+body.page-home .topbar.topbar-scrolled,
+body.page-pricing .topbar.topbar-scrolled,
+body.page-features .topbar.topbar-scrolled,
+body.page-compare .topbar.topbar-scrolled,
+body.page-contact .topbar.topbar-scrolled,
+body.page-legal .topbar.topbar-scrolled,
+body.page-subscription .topbar.topbar-scrolled,
+body.page-checkout .topbar.topbar-scrolled {
+  top: 10px !important;
+  margin: 10px auto 0 !important;
+  height: 60px !important;
+  min-height: 60px !important;
+  background: var(--nav-bg-scroll) !important;
+  border-color: rgba(59, 255, 150, 0.22) !important;
+  backdrop-filter: blur(28px) !important;
+  -webkit-backdrop-filter: blur(28px) !important;
+  box-shadow:
+    0 12px 36px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset !important;
+  transform: none !important;
+  transition:
+    background 280ms var(--nav-ease),
+    box-shadow 280ms var(--nav-ease),
+    top 280ms var(--nav-ease),
+    margin 280ms var(--nav-ease),
+    height 280ms var(--nav-ease),
+    min-height 280ms var(--nav-ease),
+    border-color 280ms ease,
+    backdrop-filter 280ms ease !important;
+}
+
+body .topbar-inner,
+body.page-home .topbar-inner,
+body.page-pricing .topbar-inner {
+  max-width: none !important;
+  width: 100% !important;
+  height: 72px !important;
+  min-height: 72px !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 24px !important;
+  padding: 0 28px !important;
+  position: relative !important;
+  flex-wrap: nowrap !important;
+  transition: height 280ms var(--nav-ease), min-height 280ms var(--nav-ease) !important;
+}
+
+body .topbar.topbar-scrolled .topbar-inner,
+body.page-home .topbar.topbar-scrolled .topbar-inner,
+body.page-pricing .topbar.topbar-scrolled .topbar-inner {
+  height: 60px !important;
+  min-height: 60px !important;
+}
+
+/* ── Logo ─────────────────────────────────────────────────── */
+
+body .topbar .logo,
+body.page-home .topbar .logo,
+body.page-pricing .topbar .logo,
+body.page-features .topbar .logo,
+body.page-compare .topbar .logo,
+body.page-subscription .topbar .logo {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  font-family: var(--nav-display) !important;
+  font-weight: 900 !important;
+  font-size: 1.55rem !important;
+  letter-spacing: -0.04em !important;
+  line-height: 1;
+  color: var(--nav-ink) !important;
+  text-decoration: none;
+  transition: opacity 200ms ease;
+}
+
+body .topbar .logo span,
+body.page-home .topbar .logo span,
+body.page-pricing .topbar .logo span,
+body.page-features .topbar .logo span,
+body.page-compare .topbar .logo span,
+body.page-ready .topbar .logo span,
+body.page-subscription .topbar .logo span {
+  color: transparent !important;
+  background: linear-gradient(135deg, #7affb8 0%, #4bff9f 45%, #2dff8f 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter:
+    drop-shadow(0 0 10px rgba(75, 255, 159, 0.18))
+    drop-shadow(0 0 22px rgba(45, 255, 143, 0.1)) !important;
+  animation: none !important;
+  transform: none !important;
+  display: inline !important;
+}
+
+body .topbar .logo:hover {
+  opacity: 0.9;
+}
+
+/* ── Panel (nav centre + actions droite) ──────────────────── */
+
+body .topbar-panel {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 20px;
+}
+
+body .topbar .topnav,
+body.page-home .topbar .topnav,
+body.page-pricing .topbar .topnav {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  position: static !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 2px !important;
+  margin: 0;
+  z-index: 1;
+}
+
+body .topbar .topnav a,
+body.page-home .topbar .topnav a,
+body.page-pricing .topbar .topnav a,
+body.page-features .topbar .topnav a,
+body.page-compare .topbar .topnav a,
+body.page-contact .topbar .topnav a,
+body.page-legal .topbar .topnav a,
+body.page-subscription .topbar .topnav a,
+body.page-checkout .topbar .topnav a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px !important;
+  border-radius: 0 !important;
+  color: var(--nav-muted) !important;
+  text-decoration: none !important;
+  font-family: var(--nav-font) !important;
+  font-size: 0.88rem !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: color 220ms var(--nav-ease) !important;
+}
+
+/* Barre animée sous les liens — jamais d'underline classique */
+body .topbar .topnav a::after,
+body.page-home .topbar .topnav a::after,
+body.page-pricing .topbar .topnav a::after {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #4bff9f, #2dff8f);
+  transform: translateX(-50%);
+  opacity: 0;
+  transition:
+    width 240ms var(--nav-ease),
+    opacity 200ms ease,
+    box-shadow 240ms ease !important;
+  box-shadow: none;
+}
+
+body .topbar .topnav a:hover,
+body.page-home .topbar .topnav a:hover,
+body.page-pricing .topbar .topnav a:hover {
+  color: #4bff9f !important;
+  text-shadow: none !important;
+  background: transparent !important;
+  text-decoration: none !important;
+  transform: none !important;
+}
+
+body .topbar .topnav a:hover::after,
+body.page-home .topbar .topnav a:hover::after,
+body.page-pricing .topbar .topnav a:hover::after {
+  width: 55% !important;
+  opacity: 1 !important;
+  box-shadow: 0 0 10px rgba(75, 255, 159, 0.55);
+}
+
+body .topbar .topnav a.active,
+body.page-home .topbar .topnav a.active,
+body.page-pricing .topbar .topnav a.active,
+body.page-features .topbar .topnav a.active,
+body.page-compare .topbar .topnav a.active,
+body.page-contact .topbar .topnav a.active {
+  color: var(--nav-ink) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Tarifs actif — plus visible (blanc + underline rouge) */
+body.page-pricing .topbar .topnav a.active {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+body .topbar .topnav a.active::after,
+body.page-home .topbar .topnav a.active::after,
+body.page-pricing .topbar .topnav a.active::after,
+body.page-features .topbar .topnav a.active::after,
+body.page-compare .topbar .topnav a.active::after,
+body.page-contact .topbar .topnav a.active::after {
+  width: 55% !important;
+  opacity: 1 !important;
+  background: linear-gradient(90deg, #4bff9f, #2dff8f) !important;
+  box-shadow: 0 0 10px rgba(75, 255, 159, 0.45) !important;
+  margin-top: 0 !important;
+}
+
+body.page-pricing .topbar .topnav a.active::after {
+  width: 72% !important;
+  height: 3px !important;
+  box-shadow: 0 0 12px rgba(75, 255, 159, 0.55) !important;
+}
+
+body .topbar .topnav a.active:hover {
+  color: #4bff9f !important;
+  background: transparent !important;
+}
+
+/* ── Actions ──────────────────────────────────────────────── */
+
+body .topbar .top-actions,
+body.page-home .topbar .top-actions,
+body.page-pricing .topbar .top-actions {
+  display: flex !important;
+  align-items: center;
+  gap: 12px !important;
+  flex: 0 0 auto;
+  margin: 0 !important;
+  position: relative;
+  z-index: 2;
+}
+
+body .topbar .nav-btn,
+body .topbar a.nav-btn,
+body .topbar button.nav-btn,
+body .topbar #login-open.nav-btn,
+body .topbar .nav-action.nav-btn,
+body .topbar .nav-cta.nav-btn,
+body.page-home .topbar .nav-cta,
+body.page-pricing .topbar .nav-cta {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px !important;
+  height: 40px !important;
+  padding: 0 18px !important;
+  border-radius: 14px !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em;
+  text-decoration: none !important;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform 220ms var(--nav-ease),
+    box-shadow 220ms ease,
+    background 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease !important;
+}
+
+/* Connexion — transparent, fine bordure rouge */
+body .topbar .nav-btn--ghost,
+body .topbar #login-open.nav-btn--ghost,
+body .topbar .nav-action--link.nav-btn--ghost,
+body.page-home .nav-action--link,
+body .topbar #login-open.nav-action--link {
+  background: transparent !important;
+  border: 1px solid rgba(75, 255, 159, 0.45) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: none !important;
+  min-height: 40px !important;
+  padding: 0 18px !important;
+  border-radius: 14px !important;
+}
+
+body .topbar .nav-btn--ghost:hover,
+body .topbar #login-open.nav-btn--ghost:hover,
+body.page-home .nav-action--link:hover {
+  color: #fff !important;
+  border-color: rgba(75, 255, 159, 0.7) !important;
+  background: rgba(75, 255, 159, 0.1) !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Créer un compte — dégradé + glow */
+body .topbar .nav-btn--primary,
+body .topbar .nav-cta.nav-btn--primary,
+body .topbar a.nav-btn--primary,
+body.page-home .nav-cta,
+body.page-pricing .nav-cta {
+  background: linear-gradient(135deg, #4bff9f 0%, #2dff8f 100%) !important;
+  border: 1px solid transparent !important;
+  color: #fff !important;
+  border-radius: 14px !important;
+  box-shadow:
+    0 4px 18px rgba(45, 255, 143, 0.35),
+    0 0 0 1px rgba(75, 255, 159, 0.1) inset !important;
+}
+
+body .topbar .nav-btn--primary:hover,
+body .topbar .nav-cta.nav-btn--primary:hover,
+body.page-home .nav-cta:hover {
+  transform: scale(1.04) !important;
+  box-shadow:
+    0 8px 28px rgba(45, 255, 143, 0.5),
+    0 0 24px rgba(75, 255, 159, 0.25) !important;
+  color: #fff !important;
+}
+
+/* .hidden doit gagner sur display:inline-flex !important des boutons nav */
+body .topbar .hidden,
+body .topbar .nav-btn.hidden,
+body .topbar a.hidden,
+body .topbar button.hidden,
+body .topbar .requires-guest.hidden,
+body .topbar .requires-auth.hidden,
+body.page-home .topbar .hidden,
+body.page-pricing .topbar .hidden {
+  display: none !important;
+}
+
+/* Anti-FOUC: classe html.nav-authed posée en <head> si darkclaude_session_token */
+html.nav-authed .requires-guest,
+html.nav-authed body .topbar .requires-guest,
+html.nav-authed body .topbar .nav-btn.requires-guest,
+html.nav-authed body .topbar a.requires-guest,
+html.nav-authed body .topbar .nav-cta.requires-guest,
+html.nav-authed body.page-home .topbar .nav-cta.requires-guest,
+html.nav-authed body.page-pricing .topbar .nav-cta.requires-guest,
+html.nav-authed body.page-features .topbar .nav-cta.requires-guest,
+html.nav-authed body.page-compare .topbar .nav-cta.requires-guest,
+html.nav-authed body.page-contact .topbar .nav-cta.requires-guest,
+html.nav-authed body.page-legal .topbar .nav-cta.requires-guest,
+html.nav-authed body.page-subscription .topbar .nav-cta.requires-guest,
+html.nav-authed body.page-checkout .topbar .nav-cta.requires-guest,
+html.nav-authed body .topbar.is-mobile-nav-open .nav-cta.requires-guest,
+html.nav-authed body .topbar.is-mobile-nav-open #login-open {
+  display: none !important;
+}
+
+html.nav-authed .btn.requires-auth.hidden,
+html.nav-authed a.requires-auth.hidden,
+html.nav-authed body .topbar .requires-auth.hidden {
+  display: inline-flex !important;
+}
+
+body .topbar #logout-btn.nav-btn {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: var(--nav-muted) !important;
+}
+
+/* ── Hamburger ────────────────────────────────────────────── */
+
+/* Close X inside drawer — hidden on desktop */
+body .mobile-nav-close,
+body.page-home .mobile-nav-close {
+  display: none;
+  position: absolute;
+  top: max(14px, env(safe-area-inset-top, 0px));
+  right: 12px;
+  z-index: 5;
+  box-sizing: border-box;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #f2f2f2;
+  font-size: 1.75rem;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+body .mobile-nav-close:hover,
+body .mobile-nav-close:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+  outline: none;
+}
+
+body .mobile-nav-toggle,
+body.page-home .mobile-nav-toggle,
+body.page-pricing .mobile-nav-toggle {
+  display: none;
+  position: relative;
+  z-index: 2;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  place-content: center;
+  gap: 5px;
+  border-radius: 12px;
+  border: 1px solid var(--nav-red-border);
+  background: rgba(12, 12, 14, 0.6);
+  cursor: pointer;
+  transition: border-color 200ms ease, background 200ms ease, box-shadow 200ms ease;
+}
+
+body .mobile-nav-toggle span,
+body.page-home .mobile-nav-toggle span,
+body.page-pricing .mobile-nav-toggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  margin: 0 auto;
+  border-radius: 999px;
+  background: #fff;
+  transition: transform 220ms var(--nav-ease), opacity 180ms ease;
+}
+
+body .mobile-nav-toggle:hover {
+  border-color: rgba(75, 255, 159, 0.4);
+  box-shadow: 0 0 14px rgba(75, 255, 159, 0.18);
+}
+
+body .topbar.is-mobile-nav-open .mobile-nav-toggle span:nth-child(1),
+body.page-home .topbar.is-mobile-nav-open .mobile-nav-toggle span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+body .topbar.is-mobile-nav-open .mobile-nav-toggle span:nth-child(2),
+body.page-home .topbar.is-mobile-nav-open .mobile-nav-toggle span:nth-child(2) {
+  opacity: 0;
+}
+
+body .topbar.is-mobile-nav-open .mobile-nav-toggle span:nth-child(3),
+body.page-home .topbar.is-mobile-nav-open .mobile-nav-toggle span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Scrim: dim page only — NO backdrop-filter (would blur drawer if stacking slips).
+   Stacking: page < scrim (150) < topbar when open (210) / drawer. */
+.mobile-nav-backdrop {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  filter: none;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 260ms ease, visibility 260ms ease;
+}
+
+body.is-mobile-nav-open .mobile-nav-backdrop {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+/* Topbar must sit ABOVE the scrim when open — drawer is a child of .topbar,
+   so raising only .topbar-panel z-index cannot escape the parent's stacking context. */
+body .topbar.is-mobile-nav-open,
+body.page-home .topbar.is-mobile-nav-open,
+body.page-pricing .topbar.is-mobile-nav-open,
+body.page-features .topbar.is-mobile-nav-open,
+body.page-compare .topbar.is-mobile-nav-open,
+body.page-contact .topbar.is-mobile-nav-open,
+body.page-legal .topbar.is-mobile-nav-open,
+body.page-subscription .topbar.is-mobile-nav-open,
+body.page-checkout .topbar.is-mobile-nav-open {
+  z-index: 210 !important;
+  overflow: visible !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ── Mobile drawer ────────────────────────────────────────── */
+/* IMPORTANT: backdrop-filter on .topbar creates a containing block for
+   position:fixed children — remove it on mobile so the drawer is viewport-fixed,
+   not trapped inside the 64px pill (Accueil scroll box + horizontal page shift). */
+
+@media (max-width: 980px) {
+  body .topbar,
+  body.page-home .topbar,
+  body.page-pricing .topbar,
+  body.page-features .topbar,
+  body.page-compare .topbar,
+  body.page-contact .topbar,
+  body.page-legal .topbar,
+  body.page-subscription .topbar,
+  body.page-checkout .topbar {
+    top: 12px !important;
+    width: calc(100% - 32px) !important;
+    max-width: none !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    margin: 12px auto 0 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(6, 6, 7, 0.96) !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  body .topbar.topbar-scrolled,
+  body.page-home .topbar.topbar-scrolled,
+  body.page-pricing .topbar.topbar-scrolled,
+  body.page-features .topbar.topbar-scrolled,
+  body.page-compare .topbar.topbar-scrolled,
+  body.page-contact .topbar.topbar-scrolled,
+  body.page-legal .topbar.topbar-scrolled,
+  body.page-subscription .topbar.topbar-scrolled,
+  body.page-checkout .topbar.topbar-scrolled {
+    top: 8px !important;
+    margin: 8px auto 0 !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(6, 6, 7, 0.98) !important;
+    transform: none !important;
+  }
+
+  body .topbar-inner,
+  body.page-home .topbar-inner,
+  body.page-pricing .topbar-inner,
+  body.page-features .topbar-inner,
+  body.page-compare .topbar-inner,
+  body.page-contact .topbar-inner,
+  body.page-legal .topbar-inner,
+  body.page-subscription .topbar-inner,
+  body.page-checkout .topbar-inner {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    grid-template-columns: none !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    padding: 0 16px !important;
+    gap: 12px !important;
+    max-width: none !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  body .topbar.topbar-scrolled .topbar-inner,
+  body.page-home .topbar.topbar-scrolled .topbar-inner,
+  body.page-pricing .topbar.topbar-scrolled .topbar-inner {
+    height: 52px !important;
+    min-height: 52px !important;
+  }
+
+  body .topbar .logo,
+  body.page-home .topbar .logo {
+    font-size: 1.28rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  body .mobile-nav-toggle,
+  body.page-home .mobile-nav-toggle,
+  body.page-pricing .mobile-nav-toggle,
+  body.page-features .mobile-nav-toggle,
+  body.page-compare .mobile-nav-toggle,
+  body.page-contact .mobile-nav-toggle,
+  body.page-legal .mobile-nav-toggle,
+  body.page-subscription .mobile-nav-toggle,
+  body.page-checkout .mobile-nav-toggle {
+    display: inline-grid !important;
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
+    width: 40px;
+    height: 40px;
+  }
+
+  body .mobile-nav-close,
+  body.page-home .mobile-nav-close,
+  body.page-pricing .mobile-nav-close,
+  body.page-features .mobile-nav-close,
+  body.page-compare .mobile-nav-close,
+  body.page-contact .mobile-nav-close,
+  body.page-legal .mobile-nav-close,
+  body.page-subscription .mobile-nav-close,
+  body.page-checkout .mobile-nav-close {
+    display: inline-flex !important;
+  }
+
+  /* Closed: fully out of view — no peek, no page overflow */
+  body .topbar-panel,
+  body.page-home .topbar-panel,
+  body.page-pricing .topbar-panel,
+  body.page-features .topbar-panel,
+  body.page-compare .topbar-panel,
+  body.page-contact .topbar-panel,
+  body.page-legal .topbar-panel,
+  body.page-subscription .topbar-panel,
+  body.page-checkout .topbar-panel {
+    display: flex !important;
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: auto !important;
+    z-index: 200 !important;
+    width: 75vw !important;
+    max-width: 75vw !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    min-height: 100dvh !important;
+    flex: none !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 88px 22px calc(28px + env(safe-area-inset-bottom, 0px)) !important;
+    background:
+      radial-gradient(ellipse 80% 40% at 80% 0%, rgba(75, 255, 159, 0.14) 0%, transparent 55%),
+      rgba(10, 10, 12, 0.98) !important;
+    border: none !important;
+    border-left: 1px solid var(--nav-red-border) !important;
+    border-radius: 0 !important;
+    box-shadow: -24px 0 48px rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transform: translate3d(110%, 0, 0) !important;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      transform 300ms var(--nav-ease),
+      visibility 300ms var(--nav-ease) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box !important;
+  }
+
+  body .topbar.is-mobile-nav-open .topbar-panel,
+  body.page-home .topbar.is-mobile-nav-open .topbar-panel,
+  body.page-pricing .topbar.is-mobile-nav-open .topbar-panel,
+  body.page-features .topbar.is-mobile-nav-open .topbar-panel,
+  body.page-compare .topbar.is-mobile-nav-open .topbar-panel,
+  body.page-contact .topbar.is-mobile-nav-open .topbar-panel,
+  body.page-legal .topbar.is-mobile-nav-open .topbar-panel,
+  body.page-subscription .topbar.is-mobile-nav-open .topbar-panel,
+  body.page-checkout .topbar.is-mobile-nav-open .topbar-panel {
+    transform: translate3d(0, 0, 0) !important;
+    visibility: visible;
+    pointer-events: auto;
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    z-index: 220 !important;
+  }
+
+  /* Keep logo + close control sharp above scrim */
+  body .topbar.is-mobile-nav-open .logo,
+  body .topbar.is-mobile-nav-open .mobile-nav-toggle,
+  body .topbar.is-mobile-nav-open .topnav,
+  body .topbar.is-mobile-nav-open .topnav a,
+  body .topbar.is-mobile-nav-open .top-actions {
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  body .topbar .topnav,
+  body.page-home .topbar .topnav,
+  body.page-pricing .topbar .topnav,
+  body.page-features .topbar .topnav,
+  body.page-compare .topbar .topnav,
+  body.page-contact .topbar .topnav,
+  body.page-legal .topbar .topnav,
+  body.page-subscription .topbar .topnav,
+  body.page-checkout .topbar .topnav,
+  body .topbar .top-actions,
+  body.page-home .topbar .top-actions,
+  body.page-pricing .topbar .top-actions {
+    display: flex !important;
+  }
+
+  body .topbar .topnav,
+  body.page-home .topbar .topnav,
+  body.page-pricing .topbar .topnav,
+  body.page-home .topbar.is-mobile-nav-open .topnav,
+  body.page-pricing .topbar.is-mobile-nav-open .topnav {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    flex: 0 0 auto !important;
+    gap: 4px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  body .topbar .topnav a,
+  body.page-home .topbar.is-mobile-nav-open .topnav a,
+  body.page-pricing .topbar.is-mobile-nav-open .topnav a {
+    justify-content: flex-start !important;
+    min-height: 48px;
+    padding: 0 14px !important;
+    font-size: 1rem !important;
+    border-radius: 12px !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  body .topbar .topnav a::after,
+  body.page-home .topbar .topnav a::after {
+    display: none !important;
+  }
+
+  body .topbar .topnav a.active,
+  body.page-home .topbar.is-mobile-nav-open .topnav a.active {
+    color: #4bff9f !important;
+    background: rgba(75, 255, 159, 0.1) !important;
+  }
+
+  body.page-pricing .topbar.is-mobile-nav-open .topnav a.active {
+    color: #ffffff !important;
+    background: rgba(75, 255, 159, 0.14) !important;
+    font-weight: 600 !important;
+  }
+
+  body .topbar .top-actions,
+  body.page-home .topbar.is-mobile-nav-open .top-actions,
+  body.page-pricing .topbar.is-mobile-nav-open .top-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    margin-top: 24px !important;
+    margin-left: 0 !important;
+    padding: 20px 0 0 !important;
+    border-top: 1px solid rgba(70, 255, 156, 0.12);
+    width: 100%;
+    position: static !important;
+    background: transparent !important;
+  }
+
+  body .topbar .nav-btn,
+  body .topbar a.nav-btn,
+  body .topbar button.nav-btn,
+  body.page-home .topbar.is-mobile-nav-open .top-actions .nav-action,
+  body.page-home .topbar.is-mobile-nav-open .top-actions .nav-cta,
+  body.page-home .topbar.is-mobile-nav-open .top-actions .requires-auth.btn,
+  body.page-home .topbar.is-mobile-nav-open #login-open,
+  body.page-home .topbar.is-mobile-nav-open .nav-cta.requires-guest {
+    width: 100%;
+    min-height: 46px !important;
+    height: 46px !important;
+    box-sizing: border-box !important;
+  }
+
+  body.page-home .topbar.is-mobile-nav-open #login-open,
+  body .topbar.is-mobile-nav-open #login-open {
+    background: transparent !important;
+    border: 1px solid rgba(75, 255, 159, 0.45) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: none !important;
+  }
+
+  body.page-home .topbar.is-mobile-nav-open .nav-cta.requires-guest,
+  body .topbar.is-mobile-nav-open .nav-cta.requires-auth {
+    background: linear-gradient(135deg, #4bff9f 0%, #2dff8f 100%) !important;
+    border: none !important;
+    color: #fff !important;
+    box-shadow: 0 4px 18px rgba(45, 255, 143, 0.35) !important;
+  }
+
+  body .topbar.is-mobile-nav-open .nav-btn--ghost.requires-auth {
+    background: transparent !important;
+    border: 1px solid rgba(75, 255, 159, 0.45) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: none !important;
+  }
+
+  body.is-mobile-nav-open {
+    overflow: hidden;
+    filter: none !important;
+  }
+
+  .mobile-nav-backdrop {
+    z-index: 150;
+  }
+}
+
+@media (max-width: 768px) {
+  body .topbar,
+  body.page-home .topbar,
+  body.page-pricing .topbar,
+  body.page-features .topbar,
+  body.page-compare .topbar,
+  body.page-contact .topbar,
+  body.page-legal .topbar,
+  body.page-subscription .topbar,
+  body.page-checkout .topbar {
+    width: calc(100% - 32px) !important;
+    margin: 12px auto 0 !important;
+  }
+
+  body .topbar-inner,
+  body.page-home .topbar-inner {
+    padding: 0 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  body .topbar,
+  body.page-home .topbar,
+  body.page-pricing .topbar,
+  body.page-features .topbar,
+  body.page-compare .topbar,
+  body.page-contact .topbar,
+  body.page-legal .topbar,
+  body.page-subscription .topbar,
+  body.page-checkout .topbar {
+    width: calc(100% - 32px) !important;
+    margin: 10px auto 0 !important;
+    border-radius: 14px !important;
+  }
+
+  body .topbar-inner,
+  body.page-home .topbar-inner {
+    padding: 0 14px !important;
+  }
+
+  body .topbar .logo,
+  body.page-home .topbar .logo {
+    font-size: 1.2rem !important;
+  }
+
+  body .topbar-panel,
+  body.page-home .topbar-panel {
+    width: 75vw !important;
+    max-width: 75vw !important;
+  }
+}
+
+/* Page lock / no leftover disclaimer blur */
+html {
+  overflow-x: clip;
+  scroll-padding-top: 104px;
+}
+
+html:not(.disclaimer-lock),
+html:not(.disclaimer-lock) body {
+  filter: none;
+}
+
+html:not(.disclaimer-lock) .disclaimer-overlay {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+  opacity: 0 !important;
+}
+
+body:not(.is-mobile-nav-open) .mobile-nav-backdrop {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+body.page-home .hero {
+  padding-top: clamp(100px, 14vh, 148px);
+}
+
+#produit,
+#fonctionnalites,
+#modeles,
+#faq,
+#contact {
+  scroll-margin-top: 104px;
+}
+
+/* Language switcher — styles de base dans i18n.js (dropdown custom) */
+.dg-lang {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--nav-font);
+  font-size: 0.72rem;
+  font-weight: 600;
+  user-select: none;
+}
+.dg-lang--nav {
+  margin-right: 10px;
+}
+/* Desktop: bar switcher hidden — desktop uses .dg-lang--nav in .top-actions */
+.dg-lang--bar {
+  display: none;
+}
+@media (max-width: 980px) {
+  .dg-lang--nav {
+    margin: 8px 0 4px;
+    width: 100%;
+    justify-content: center;
+  }
+  /* Compact switcher in the mobile top bar (logo … langs … hamburger) */
+  body .topbar-inner > .dg-lang--bar,
+  body.page-home .topbar-inner > .dg-lang--bar,
+  body.page-pricing .topbar-inner > .dg-lang--bar,
+  body.page-features .topbar-inner > .dg-lang--bar,
+  body.page-compare .topbar-inner > .dg-lang--bar,
+  body.page-contact .topbar-inner > .dg-lang--bar,
+  body.page-legal .topbar-inner > .dg-lang--bar,
+  body.page-subscription .topbar-inner > .dg-lang--bar,
+  body.page-checkout .topbar-inner > .dg-lang--bar {
+    display: inline-flex !important;
+    flex-shrink: 0 !important;
+    align-items: center;
+    margin-left: auto !important;
+    margin-right: 4px !important;
+    position: relative;
+    z-index: 20;
+    white-space: nowrap;
+    max-width: none;
+  }
+  /* Hamburger no longer needs margin-left:auto — langs push it right */
+  body .mobile-nav-toggle,
+  body.page-home .mobile-nav-toggle,
+  body.page-pricing .mobile-nav-toggle,
+  body.page-features .mobile-nav-toggle,
+  body.page-compare .mobile-nav-toggle,
+  body.page-contact .mobile-nav-toggle,
+  body.page-legal .mobile-nav-toggle,
+  body.page-subscription .mobile-nav-toggle,
+  body.page-checkout .mobile-nav-toggle {
+    margin-left: 0 !important;
+  }
+  body .topbar.is-mobile-nav-open .dg-lang--bar {
+    filter: none !important;
+  }
+  body .topbar.is-mobile-nav-open .dg-lang__menu {
+    z-index: 230;
+  }
+
+  /* Lang dropdown must paint above hero / page content (topbar has overflow:hidden on mobile) */
+  body .topbar.is-lang-open,
+  body.page-home .topbar.is-lang-open,
+  body.page-pricing .topbar.is-lang-open,
+  body.page-features .topbar.is-lang-open,
+  body.page-compare .topbar.is-lang-open,
+  body.page-contact .topbar.is-lang-open,
+  body.page-legal .topbar.is-lang-open,
+  body.page-subscription .topbar.is-lang-open,
+  body.page-checkout .topbar.is-lang-open {
+    overflow: visible !important;
+    z-index: 220 !important;
+  }
+
+  body .topbar.is-lang-open .topbar-inner,
+  body.page-home .topbar.is-lang-open .topbar-inner,
+  body.page-pricing .topbar.is-lang-open .topbar-inner,
+  body.page-features .topbar.is-lang-open .topbar-inner,
+  body.page-compare .topbar.is-lang-open .topbar-inner,
+  body.page-contact .topbar.is-lang-open .topbar-inner,
+  body.page-legal .topbar.is-lang-open .topbar-inner,
+  body.page-subscription .topbar.is-lang-open .topbar-inner,
+  body.page-checkout .topbar.is-lang-open .topbar-inner {
+    overflow: visible !important;
+  }
+
+  body .topbar-inner > .dg-lang--bar .dg-lang__menu,
+  body .topbar.is-lang-open .dg-lang__menu {
+    z-index: 230 !important;
+  }
+}
+@media (max-width: 380px) {
+  body .topbar-inner > .dg-lang--bar {
+    margin-right: 2px !important;
+  }
+}

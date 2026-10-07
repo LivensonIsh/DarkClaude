@@ -1,0 +1,108 @@
+/* DarkClaude — thème cyberpunk : vert néon sur noir (chargé en dernier, surcharge les autres feuilles) */
+:root {
+  --dc-green: #00ff88;
+  --dc-green-soft: #3bff96;
+  --dc-green-deep: #00b35f;
+  --dc-green-glow: rgba(0, 255, 136, 0.35);
+  --dc-black: #020504;
+  --dc-panel: rgba(4, 14, 9, 0.88);
+  --dc-line: rgba(0, 255, 136, 0.16);
+  --bg: #020504;
+  --bg-soft: #06100b;
+  --line: #12301f;
+  --card-bg: rgba(4, 14, 9, 0.9);
+  --card-border: #14402a;
+  --red: #00ff88;
+  --red-2: #00b35f;
+  --nav-red: #00ff88;
+  --nav-red-hot: #00b35f;
+  --nav-red-border: rgba(0, 255, 136, 0.18);
+}
+
+html, body { background: var(--dc-black); }
+::selection { background: rgba(0, 255, 136, 0.3); color: #eafff4; }
+
+/* Fines lignes de scan, très discrètes */
+body::before {
+  content: "";
+  position: fixed; inset: 0; pointer-events: none; z-index: 1;
+  background: repeating-linear-gradient(0deg, rgba(0,255,136,0.025) 0, rgba(0,255,136,0.025) 1px, transparent 1px, transparent 3px);
+  mix-blend-mode: screen;
+}
+
+/* Texte sur fond vert néon : noir pour garder le contraste */
+.btn-primary, .btn-hero-cta, .nav-btn--primary, .cta-card .btn-primary,
+.feature-card__badge, .pill--stat .pill-icon + span { color: #021208 !important; }
+.btn-primary, .btn-hero-cta { background: linear-gradient(135deg, #00ff88, #00c46a) !important; box-shadow: 0 0 22px var(--dc-green-glow); border-color: transparent !important; }
+.btn-primary:hover, .btn-hero-cta:hover { box-shadow: 0 0 34px rgba(0,255,136,0.55); filter: brightness(1.06); }
+.btn-ghost, .btn-outline { border-color: var(--dc-line) !important; color: var(--dc-green-soft) !important; }
+
+.logo span, .text-accent, .hero-title__accent, .eyebrow { color: var(--dc-green) !important; text-shadow: 0 0 18px var(--dc-green-glow); }
+.eyebrow { letter-spacing: .14em; font-family: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace; }
+.hero-title__brand { text-shadow: 0 0 28px rgba(0,255,136,0.25); }
+
+/* ---- Paragraphe d'accroche (hero) ---- */
+.hero-intro {
+  max-width: 760px; margin: 18px auto 6px; padding: 16px 20px;
+  font-size: 1.02rem; line-height: 1.7; color: #cfe9dc; text-align: center;
+  border: 1px solid var(--dc-line); border-radius: 14px;
+  background: linear-gradient(180deg, rgba(0,255,136,0.05), rgba(0,0,0,0.25));
+  box-shadow: 0 0 0 1px rgba(0,255,136,0.04) inset, 0 10px 30px rgba(0,0,0,0.4);
+}
+.hero-intro strong { color: var(--dc-green); font-weight: 700; }
+
+/* ---- Section « Pourquoi DarkClaude » ---- */
+.dc-why { max-width: 820px; margin: 0 auto; text-align: center; }
+.dc-why p { font-size: 1.05rem; line-height: 1.8; color: #c3dccf; }
+.dc-why p + p { margin-top: 14px; }
+.dc-why strong { color: var(--dc-green); }
+
+/* ---- Tarifs en gourdes haïtiennes ---- */
+.dc-pricing-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 28px; }
+.dc-plan {
+  position: relative; display: flex; flex-direction: column; padding: 24px 22px;
+  background: var(--dc-panel); border: 1px solid var(--dc-line); border-radius: 16px;
+  box-shadow: 0 12px 34px rgba(0,0,0,.45); transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.dc-plan:hover { transform: translateY(-4px); border-color: rgba(0,255,136,.45); box-shadow: 0 0 30px rgba(0,255,136,.14), 0 12px 34px rgba(0,0,0,.5); }
+.dc-plan--featured { border-color: rgba(0,255,136,.55); box-shadow: 0 0 34px rgba(0,255,136,.16), 0 12px 34px rgba(0,0,0,.5); }
+.dc-plan__tag {
+  position: absolute; top: -11px; right: 18px; padding: 3px 10px; border-radius: 999px;
+  font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  background: var(--dc-green); color: #021208;
+}
+.dc-plan__name { font-size: 1.05rem; font-weight: 700; color: #eafff4; }
+.dc-plan__price { margin: 14px 0 2px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.dc-plan__amount { font-size: 2.1rem; font-weight: 800; color: var(--dc-green); text-shadow: 0 0 20px var(--dc-green-glow); font-variant-numeric: tabular-nums; }
+.dc-plan__cur { font-size: .95rem; font-weight: 700; color: #9fe9c4; letter-spacing: .06em; }
+.dc-plan__period { font-size: .85rem; color: #7fa793; margin-bottom: 14px; }
+.dc-plan ul { list-style: none; padding: 0; margin: 0 0 20px; display: grid; gap: 9px; flex: 1; }
+.dc-plan li { position: relative; padding-left: 22px; font-size: .92rem; color: #c3dccf; }
+.dc-plan li::before { content: "▸"; position: absolute; left: 2px; color: var(--dc-green); }
+.dc-plan .btn { width: 100%; justify-content: center; text-align: center; }
+.dc-price-note { margin-top: 18px; text-align: center; font-size: .8rem; color: #6f9582; }
+@media (max-width: 900px) { .dc-pricing-grid { grid-template-columns: 1fr; } }
+
+/* ---- Mobile : plus aucun débordement horizontal ---- */
+html, body { max-width: 100%; overflow-x: clip; }
+h1, h2, h3, h4, p, a, li { overflow-wrap: anywhere; }
+.hero-content { max-width: 100%; padding-inline: 14px; }
+h1.hero-title > .hero-title__brand, .hero-title__brand { font-size: clamp(2rem, 11.5vw, 5.6rem) !important; white-space: normal; max-width: 100%; }
+h1.hero-title > .hero-title__accent, .hero-title__accent, .hero-title { font-size: clamp(1.3rem, 6.6vw, 3rem); white-space: normal; max-width: 100%; }
+.hero-intro { width: 100%; max-width: 100%; }
+@media (max-width: 600px) {
+  .hero-intro { font-size: .93rem; text-align: left; padding: 14px; }
+  .dc-why p { font-size: .98rem; text-align: left; }
+  .dc-plan { padding: 20px 16px; }
+  .site-footer__grid { grid-template-columns: 1fr 1fr !important; gap: 22px; }
+  .site-footer__grid > div:first-child { grid-column: 1 / -1; }
+}
+@media (max-width: 380px) { .site-footer__grid { grid-template-columns: 1fr !important; } }
+
+/* ---- Footer : réseaux + statut ---- */
+.site-footer__social { display: flex; gap: 10px; margin-top: 14px; }
+.site-footer__social a { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--dc-line); color: var(--dc-green); background: rgba(0,255,136,.05); }
+.site-footer__social a:hover { box-shadow: 0 0 18px var(--dc-green-glow); }
+.site-footer__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: center; }
+.site-footer__status { display: inline-flex; align-items: center; gap: 8px; font-size: .85rem; color: #9fe9c4; }
+.site-footer__status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dc-green); box-shadow: 0 0 10px var(--dc-green); }

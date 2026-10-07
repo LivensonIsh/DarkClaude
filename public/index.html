@@ -1,0 +1,507 @@
+<!DOCTYPE html><html lang="en" data-theme="dark" class="i18n-ready"><head>
+    <meta charset="UTF-8">
+    <script>
+      try {
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function (regs) {
+            regs.forEach(function (reg) { reg.unregister(); });
+          });
+        }
+      } catch (_e) {}
+    </script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DarkClaude — Chat IA privé sans censure | Site officiel</title>
+    <link rel="canonical" href="https://darkclaude.one/">
+    <link rel="alternate" hreflang="fr" href="https://darkclaude.one/">
+    <link rel="alternate" hreflang="x-default" href="https://darkclaude.one/">
+    <meta name="description" content="DarkClaude — site officiel darkclaude.one. Chat IA privé sans censure, assistant DarkClaude pour membres Premium. Inscription, tarifs et accès direct au chat DarkClaude dès 1 500 HTG (gourdes).">
+    <meta name="application-name" content="DarkClaude">
+    <meta name="google-site-verification" content="VJ0vyRHZlIuhjHWBz7Dafl6-Uy5cp9K9CS9xWueQbRs">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta property="og:site_name" content="DarkClaude">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:title" content="DarkClaude — Chat IA privé sans censure">
+    <meta property="og:description" content="DarkClaude, l’assistant IA privé sans censure. Chat réservé aux membres, accès Premium instantané.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://darkclaude.one/">
+    <meta property="og:image" content="images/darkgpt-mark_1.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="DarkClaude — Chat IA privé sans censure">
+    <meta name="twitter:description" content="DarkClaude — assistant IA privé sans censure. Site officiel darkclaude.one.">
+    <meta name="twitter:image" content="https://darkclaude.one/brand/darkgpt-mark.png">
+    <meta name="theme-color" content="#060607">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://darkclaude.one/#website",
+            "name": "DarkClaude",
+            "alternateName": ["Dark Claude", "dark claude", "darkclaude", "darkclaude.one", "DarkClaude officiel"],
+            "url": "https://darkclaude.one/",
+            "description": "DarkClaude — chat IA privé sans censure. Site officiel darkclaude.one.",
+            "inLanguage": "fr-FR",
+            "publisher": { "@id": "https://darkclaude.one/#organization" }
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://darkclaude.one/#webpage",
+            "url": "https://darkclaude.one/",
+            "name": "DarkClaude — Site officiel",
+            "isPartOf": { "@id": "https://darkclaude.one/#website" },
+            "about": { "@id": "https://darkclaude.one/#organization" },
+            "description": "Page d’accueil officielle DarkClaude — chat IA sans censure sur darkclaude.one.",
+            "inLanguage": "fr-FR"
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://darkclaude.one/#organization",
+            "name": "DarkClaude",
+            "url": "https://darkclaude.one/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://darkclaude.one/brand/darkgpt-mark.png"
+            },
+            "sameAs": ["https://chat.whatsapp.com/LnuE7yJ0MhX2pPyrdMMbxD", "https://t.me/+eSmSob1eM6QzNDU0"]
+          },
+          {
+            "@type": "SoftwareApplication",
+            "@id": "https://darkclaude.one/#app",
+            "name": "DarkClaude",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web",
+            "url": "https://darkclaude.one/",
+            "description": "Assistant IA privé DarkClaude — chat sans censure, modèles avancés, accès Premium.",
+            "offers": {
+              "@type": "AggregateOffer",
+              "lowPrice": "1500",
+              "highPrice": "10350",
+              "priceCurrency": "HTG",
+              "offerCount": "3",
+              "url": "https://darkclaude.one/pricing.html"
+            }
+          }
+        ]
+      }
+    </script>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("darkclaude_session_token");
+          if (t && String(t).trim()) document.documentElement.classList.add("nav-authed");
+        } catch (_e) {}
+      })();
+    </script>
+    <link rel="icon" href="images/darkgpt-mark.png" type="image/png">
+    <link rel="apple-touch-icon" href="images/darkgpt-mark.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="css/css2.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/landing-premium.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/darkclaude-theme.css">
+  <style id="dg-i18n-style-v5">
+/* Hide i18n nodes until first apply — nav/switcher only (keeps landing layout intact) */
+html:not(.i18n-ready) .topbar [data-i18n],
+html:not(.i18n-ready) .topbar [data-i18n-login],
+html:not(.i18n-ready) .dg-lang [data-i18n],
+html:not(.i18n-ready) [data-i18n-login]{opacity:0}
+html.i18n-ready .topbar [data-i18n],
+html.i18n-ready .topbar [data-i18n-login],
+html.i18n-ready .dg-lang [data-i18n],
+html.i18n-ready [data-i18n-login]{opacity:1}
+.dg-lang{display:inline-flex;align-items:center;font-family:"DM Sans",system-ui,sans-serif;font-size:0.78rem;font-weight:600;user-select:none}
+.dg-lang__drop{position:relative;display:inline-block}
+.dg-lang__trigger{display:inline-flex;align-items:center;gap:6px;appearance:none;border:1px solid rgba(255,255,255,.12);background:rgba(6,6,7,.75);color:#e8e8ed;cursor:pointer;padding:6px 10px;border-radius:8px;line-height:1.2;font:inherit;font-weight:600;min-width:0;max-width:148px;transition:border-color .15s ease,color .15s ease,box-shadow .15s ease}
+.dg-lang__trigger:hover,.dg-lang__drop.is-open .dg-lang__trigger{border-color:rgba(59, 255, 150,.35);color:#f5f5f7}
+.dg-lang__trigger:focus-visible{outline:2px solid rgba(59, 255, 150,.45);outline-offset:1px}
+.dg-lang__current{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dg-lang__chev{flex-shrink:0;opacity:.65;transition:transform .15s ease}
+.dg-lang__drop.is-open .dg-lang__chev{transform:rotate(180deg)}
+.dg-lang__menu{position:absolute;top:calc(100% + 4px);left:0;min-width:168px;padding:4px;background:#121214;border:1px solid rgba(255,255,255,.1);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.45);z-index:230;display:flex;flex-direction:column;gap:2px}
+.dg-lang__menu[hidden]{display:none!important}
+.dg-lang__option{display:flex;align-items:center;gap:10px;width:100%;appearance:none;border:0;background:transparent;color:#c8c8d0;cursor:pointer;padding:8px 10px;border-radius:7px;font:inherit;font-weight:500;text-align:left;transition:background .12s ease,color .12s ease}
+.dg-lang__option:hover{background:rgba(59, 255, 150,.12);color:#f5f5f7}
+.dg-lang__option.is-active{background:rgba(59, 255, 150,.18);color:#3bff96;font-weight:600}
+.dg-lang__option:focus-visible{outline:2px solid rgba(59, 255, 150,.45);outline-offset:-2px}
+.dg-lang__code{font-size:.68rem;font-weight:700;letter-spacing:.06em;opacity:.55;min-width:1.5em}
+.dg-lang__option.is-active .dg-lang__code{opacity:.85;color:#3bff96}
+.dg-lang--nav{margin-right:10px}
+.dg-lang--bar{display:none}
+.dg-lang--auth{position:fixed;top:18px;right:18px;z-index:120;padding:6px 8px;border-radius:10px;border:1px solid rgba(59, 255, 150,.18);background:rgba(6,6,7,.82);backdrop-filter:blur(12px)}
+.dg-lang--side{width:100%;justify-content:center;margin:0 0 8px;padding:6px 4px;border-radius:10px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02)}
+@media (max-width:980px){
+  .dg-lang--nav{margin:8px 0 4px;width:100%;justify-content:center}
+  .topbar-inner>.dg-lang--bar{display:inline-flex;flex-shrink:0;margin-left:auto;margin-right:4px;position:relative;z-index:20}
+  .topbar-inner>.dg-lang--bar .dg-lang__trigger{max-width:112px;padding:8px 10px;font-size:0.72rem}
+}
+@media (max-width:380px){
+  .topbar-inner>.dg-lang--bar .dg-lang__trigger{max-width:100px;font-size:0.68rem}
+}
+</style></head>
+  <body class="page-home ui-ready page-ready">
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <a class="logo" href="./index.html">Dark<span>Claude</span></a>
+        <div class="dg-lang dg-lang--bar" role="group" aria-label="Language"><div class="dg-lang__drop" data-lang-drop=""><button type="button" class="dg-lang__trigger" data-lang-trigger="" aria-haspopup="listbox" aria-expanded="false" aria-label="Language"><span class="dg-lang__current">English</span><svg class="dg-lang__chev" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3 4.5 6 7.5 9 4.5"></path></svg></button><div class="dg-lang__menu" data-lang-menu="" role="listbox" hidden=""><button type="button" class="dg-lang__option" role="option" data-lang="fr" aria-selected="false"><span class="dg-lang__code">FR</span><span class="dg-lang__name">Français</span></button><button type="button" class="dg-lang__option is-active" role="option" data-lang="en" aria-selected="true"><span class="dg-lang__code">EN</span><span class="dg-lang__name">English</span></button></div></div></div><button id="mobile-nav-toggle" class="mobile-nav-toggle" type="button" aria-label="Open menu" data-i18n-aria="nav.openMenu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="topbar-panel">
+          <button type="button" id="mobile-nav-close" class="mobile-nav-close" aria-label="Close menu" data-i18n-aria="nav.closeMenu">×</button>
+          <nav class="topnav" aria-label="Main navigation" data-i18n-aria="nav.main">
+            <a class="active" href="./index.html" data-i18n="nav.home">Home</a>
+            <a href="./features.html" data-i18n="nav.features">Features</a>
+            <a href="./compare.html" data-i18n="nav.compare">Compare</a>
+            <a href="./pricing.html" data-i18n="nav.pricing">Pricing</a>
+            <a href="./contact.html" data-i18n="nav.contact">Contact</a>
+          </nav>
+          <div class="top-actions">
+            <div class="dg-lang dg-lang--nav" role="group" aria-label="Language"><div class="dg-lang__drop" data-lang-drop=""><button type="button" class="dg-lang__trigger" data-lang-trigger="" aria-haspopup="listbox" aria-expanded="false" aria-label="Language"><span class="dg-lang__current">English</span><svg class="dg-lang__chev" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M3 4.5 6 7.5 9 4.5"></path></svg></button><div class="dg-lang__menu" data-lang-menu="" role="listbox" hidden=""><button type="button" class="dg-lang__option" role="option" data-lang="fr" aria-selected="false"><span class="dg-lang__code">FR</span><span class="dg-lang__name">Français</span></button><button type="button" class="dg-lang__option is-active" role="option" data-lang="en" aria-selected="true"><span class="dg-lang__code">EN</span><span class="dg-lang__name">English</span></button></div></div></div><a href="./auth.html?mode=login" id="login-open" class="nav-btn nav-btn--ghost requires-guest" data-login-label="Log in" data-i18n="nav.login" data-i18n-login="">Log in</a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="mobile-nav-backdrop" id="mobile-nav-backdrop" aria-hidden="true"></div>
+
+    <main id="home" class="hero">
+      <div class="hero-particles" aria-hidden="true"></div>
+      <div class="hero-overlay"></div>
+      <div class="container hero-content">
+        <p class="pill pill--stat">
+          <svg class="pill-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
+          </svg>
+          <span data-i18n="home.pill">Private AI assistant, members-only access</span>
+        </p>
+        <h1 class="hero-title">
+          <span class="hero-title__brand">DarkClaude</span>
+          <span class="hero-title__tagline"><span data-i18n="home.taglinePrefix">AI </span><span class="hero-title__accent" data-i18n="home.taglineAccent">without limits.</span></span>
+        </h1>
+        <p class="subtitle subtitle--hero" data-i18n="home.subtitle">No filter. No censorship. Private access.</p>
+        <p class="hero-intro">
+          Entrez dans la matrice de l'intelligence artificielle. Laissez derrière vous les interfaces standards et passez de l'ombre à la lumière avec <strong>DarkClaude</strong>. Conçu pour les développeurs, les noctambules, les offsec et les passionnés de tech, DarkClaude fusionne la puissance brute du modèle Claude avec une interface cyberpunk ultra-rapide et optimisée. Ne vous contentez pas de coder ou de chercher des réponses : pilotez votre flux de travail dans un environnement conçu pour la performance pure et le confort visuel.
+        </p>
+        <div class="hero-badges" aria-label="Capacités">
+          <span class="hero-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a4 4 0 0 1 4 4v2H8V6a4 4 0 0 1 4-4Z"></path><rect width="18" height="12" x="3" y="8" rx="2"></rect><path d="M12 14v2"></path></svg>
+            <span data-i18n="home.badge.models">All AI models</span>
+          </span>
+          <span class="hero-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span data-i18n="home.badge.web">Web</span>
+          </span>
+          <span class="hero-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path><path d="M19 3v4"></path><path d="M21 5h-4"></path></svg>
+            <span data-i18n="home.badge.reason">Reasoning</span>
+          </span>
+          <span class="hero-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span data-i18n="home.badge.docs">Documents</span>
+          </span>
+          <span class="hero-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>
+            <span data-i18n="home.badge.images">Images</span>
+          </span>
+          <span class="hero-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+            <span data-i18n="home.badge.osint">OSINT</span>
+          </span>
+        </div>
+        <div class="hero-actions hero-actions--landing">
+          <a class="btn btn-primary btn-hero-cta requires-guest" href="./auth.html?mode=signup" data-i18n="home.cta.signup">Create account</a>
+          <a class="btn btn-primary requires-auth hidden" href="./demo.html" data-i18n="home.cta.open">Open DarkClaude</a>
+          <a class="btn btn-ghost btn-hero-demo" href="#produit">
+            <svg class="btn-play-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M8 5v14l11-7z"></path>
+            </svg>
+            <span data-i18n="home.cta.demo">Watch demo</span>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <section class="section home-story home-before-after">
+      <div class="container reveal">
+        <p class="eyebrow" data-i18n="home.ba.eyebrow">BEFORE / AFTER</p>
+        <h2 class="center-title" data-i18n="home.ba.title" data-i18n-html="">Censored reply vs DarkClaude reply</h2>
+        <div class="home-ba-list">
+          <div class="home-ba-grid">
+            <article class="home-ba-card home-ba-card--before">
+              <p class="home-ba-label" data-i18n="home.ba.before">Before</p>
+              <h3 data-i18n="home.ba.beforeTitle">Censored reply</h3>
+              <p class="home-ba-question" data-i18n="home.ba.q">“I’d like to build this — help me do it.”</p>
+              <p class="home-ba-answer" data-i18n="home.ba.beforeA">I can’t help with that request in this context. Please rephrase your question.</p>
+            </article>
+            <div class="home-ba-arrow" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+            </div>
+            <article class="home-ba-card home-ba-card--after">
+              <p class="home-ba-label" data-i18n="home.ba.after">After</p>
+              <h3 data-i18n="home.ba.afterTitle">DarkClaude reply</h3>
+              <p class="home-ba-question" data-i18n="home.ba.q">“I’d like to build this — help me do it.”</p>
+              <p class="home-ba-answer" data-i18n="home.ba.afterA">I’m built to answer all your requests — no judgment.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="produit" class="section home-story">
+      <div class="container narrow reveal">
+        <p class="eyebrow" data-i18n="home.sol.eyebrow">THE SOLUTION</p>
+        <h2 class="center-title" data-i18n="home.sol.title" data-i18n-html="">Discover <span class="text-accent">DarkClaude</span></h2>
+        <div class="window-card home-window home-window--demo">
+          <div class="window-head">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <p>DarkClaude Demo</p>
+          </div>
+          <div class="window-body">
+            <div class="home-demo-placeholder">
+              <video id="home-demo-inline" class="home-demo-video home-demo-video--inline" autoplay="" muted="" loop="" playsinline="" preload="metadata" aria-label="Démo DarkClaude">
+                <source src="media/darkgpt-demo.mp4" type="video/mp4">
+              </video>
+              <button id="home-demo-open" class="home-demo-expand" type="button" aria-label="Expand demo" data-i18n-aria="home.sol.expand" data-i18n="home.sol.fullscreen">Fullscreen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="fonctionnalites" class="section home-story">
+      <div class="container reveal">
+        <p class="eyebrow" data-i18n="home.inc.eyebrow">WHAT'S INCLUDED</p>
+        <h2 class="center-title" data-i18n="home.inc.title" data-i18n-html="">What others refuse you. What DarkClaude unlocks.</h2>
+        <p class="center-muted" data-i18n="home.inc.sub">Direct, fast, results-first AI</p>
+        <div class="feature-grid">
+          <article class="feature-card reveal">
+            <div class="feature-card__top">
+              <span class="feature-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+              </span>
+              <span class="feature-card__badge" data-i18n="home.feat.exclusive">Exclusive</span>
+            </div>
+            <h3 data-i18n="home.feat.nolimit">No Limit AI</h3>
+            <p data-i18n="home.feat.nolimitDesc">Clear, fast, actionable answers — no useless detours.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-card__top">
+              <span class="feature-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              </span>
+              <span class="feature-card__badge" data-i18n="home.feat.new">New</span>
+            </div>
+            <h3 data-i18n="home.feat.osint">OSINT analysis</h3>
+            <p data-i18n="home.feat.osintDesc">Collect and structure PUBLIC information efficiently for your research.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-card__top">
+              <span class="feature-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+              </span>
+            </div>
+            <h3 data-i18n="home.feat.fresh">Access to recent info</h3>
+            <p data-i18n="home.feat.freshDesc">Work with up-to-date data to make better decisions.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-card__top">
+              <span class="feature-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path><path d="M19 3v4"></path><path d="M21 5h-4"></path></svg>
+              </span>
+            </div>
+            <h3 data-i18n="home.feat.gen">Instant generation</h3>
+            <p data-i18n="home.feat.genDesc">Create text, ideas, scripts and strategies in seconds.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-card__top">
+              <span class="feature-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </span>
+            </div>
+            <h3 data-i18n="home.feat.modes">Custom modes</h3>
+            <p data-i18n="home.feat.modesDesc">Adapt tone and style: No Limit, Aggressive or Developer.</p>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-card__top">
+              <span class="feature-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </span>
+            </div>
+            <h3 data-i18n="home.feat.247">Available 24/7</h3>
+            <p data-i18n="home.feat.247Desc">Continuous access, no waiting — move anytime.</p>
+          </article>
+        </div>
+        <div class="home-bonus-row">
+          <article class="benefit-card reveal">
+            <h3 data-i18n="home.bonus.title" data-i18n-html="">Ask without limits or censorship</h3>
+            <p data-i18n="home.bonus.desc">DarkClaude answers without filters, limits or censorship.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="modeles" class="section home-story">
+      <div class="container reveal">
+        <p class="eyebrow" data-i18n="home.use.eyebrow">USE CASES</p>
+        <h2 class="center-title" data-i18n="home.use.title" data-i18n-html="">What you can <span class="text-accent">actually</span> do</h2>
+        <p class="center-muted" data-i18n="home.use.sub" data-i18n-html="">One tool. Zero limits. Immediate results.</p>
+        <div class="benefit-grid">
+          <article class="benefit-card reveal">
+            <h3 data-i18n="home.use.osint">Advanced OSINT</h3>
+            <p data-i18n="home.use.osintDesc">Access and structure PUBLIC info faster than ever.</p>
+          </article>
+          <article class="benefit-card reveal">
+            <h3 data-i18n="home.use.filter" data-i18n-html="">Unfiltered AI</h3>
+            <p data-i18n="home.use.filterDesc">Raw, direct answers.</p>
+          </article>
+          <article class="benefit-card reveal">
+            <h3 data-i18n="home.use.exec">Fast execution</h3>
+            <p data-i18n="home.use.execDesc">Code, scripts, solutions: idea to action instantly.</p>
+          </article>
+          <article class="benefit-card reveal">
+            <h3 data-i18n="home.use.mind">Mental edge</h3>
+            <p data-i18n="home.use.mindDesc">Find angles, strategies and opportunities others miss.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section home-story">
+      <div class="container narrow reveal">
+        <p class="eyebrow" data-i18n="home.perf.eyebrow">PERFORMANCE</p>
+        <h2 class="center-title" data-i18n="home.perf.title" data-i18n-html=""><span class="text-accent">Fast</span> replies, minimal latency</h2>
+        <p class="center-muted" data-i18n="home.perf.sub">Stack optimized for real use: smooth generation, responsive UI, continuous experience.</p>
+      </div>
+    </section>
+
+
+    <section id="pourquoi" class="section home-story">
+      <div class="container narrow reveal">
+        <p class="eyebrow">POURQUOI DARKCLAUDE</p>
+        <h2 class="center-title">Un poste de pilotage, pas un simple <span class="text-accent">chat</span></h2>
+        <div class="dc-why">
+          <p>DarkClaude est pensé pour celles et ceux qui travaillent tard, vont vite et exigent des réponses nettes : développeurs qui livrent du code propre, analystes offsec qui structurent leurs recherches, créateurs et curieux qui veulent passer de l'idée à l'action sans détour.</p>
+          <p>Une interface sombre, fluide et sobre qui ménage vos yeux à 3 h du matin. Des réponses diffusées en temps réel. Des modes adaptés à votre façon de travailler (<strong>No Limit</strong>, <strong>Code</strong>, <strong>Analyse</strong>). Un historique de conversations conservé localement sur votre appareil.</p>
+          <p>Moins de friction, plus de signal : vous gardez la main, DarkClaude s'occupe du reste.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tarifs" class="section home-story">
+      <div class="container reveal">
+        <p class="eyebrow">TARIFS</p>
+        <h2 class="center-title">Des prix en <span class="text-accent">gourdes haïtiennes</span></h2>
+        <p class="center-muted">Payez en HTG, sans conversion ni mauvaise surprise.</p>
+        <div class="dc-pricing-grid">
+          <article class="dc-plan" data-plan="starter">
+            <p class="dc-plan__name">Standard</p>
+            <div class="dc-plan__price"><span class="dc-plan__amount" data-price-htg="1500">1 500</span><span class="dc-plan__cur">HTG</span></div>
+            <p class="dc-plan__period">par mois</p>
+            <ul>
+              <li>Modèle rapide, sans raisonnement</li>
+              <li>Modes No Limit et Code</li>
+              <li>Quota quotidien limité</li>
+            </ul>
+            <a class="btn btn-ghost" href="./auth.html?mode=signup">Choisir Standard</a>
+          </article>
+          <!-- PRIX À AJUSTER : 4 500 HTG est un prix provisoire (seuls 1 500 et 10 500 viennent du code d'origine : 9,99 € et 69,99 €) -->
+          <article class="dc-plan dc-plan--featured" data-plan="unlimited">
+            <span class="dc-plan__tag">Populaire</span>
+            <p class="dc-plan__name">Premium</p>
+            <div class="dc-plan__price"><span class="dc-plan__amount" data-price-htg="3000">3 000</span><span class="dc-plan__cur">HTG</span></div>
+            <p class="dc-plan__period">par mois</p>
+            <ul>
+              <li>Modèle avec raisonnement</li>
+              <li>Analyse d'images</li>
+              <li>Recherche web en temps réel</li>
+            </ul>
+            <a class="btn btn-primary" href="./auth.html?mode=signup">Choisir Premium</a>
+          </article>
+          <article class="dc-plan" data-plan="lifetime">
+            <p class="dc-plan__name">Lifetime</p>
+            <div class="dc-plan__price"><span class="dc-plan__amount" data-price-htg="10350">10 350</span><span class="dc-plan__cur">HTG</span></div>
+            <p class="dc-plan__period">paiement unique</p>
+            <ul>
+              <li>Tout Premium, à vie</li>
+              <li>Quota maximal</li>
+              <li>Aucun renouvellement</li>
+            </ul>
+            <a class="btn btn-ghost" href="./auth.html?mode=signup">Choisir Lifetime</a>
+          </article>
+        </div>
+        <p class="dc-price-note">Tous les prix sont en gourdes haïtiennes (HTG).</p>
+      </div>
+    </section>
+
+    <section class="section final-cta">
+      <div class="container narrow reveal">
+        <div class="cta-card reveal">
+          <h2 data-i18n="home.cta2.title" data-i18n-html="">Ready to unlock everything?</h2>
+          <p data-i18n="home.cta2.sub">Get uncensorable AI, continuously, with private access.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="./auth.html?mode=signup" data-i18n="home.cta2.get">Get access now</a>
+            <a class="btn btn-outline requires-auth hidden" href="./demo.html" data-i18n="home.cta2.client">Go to client area</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="home-demo-modal" class="home-demo-modal hidden" aria-hidden="true">
+      <button id="home-demo-close" class="home-demo-modal__close" type="button" aria-label="Close demo" data-i18n-aria="home.sol.close">×</button>
+      <button id="home-demo-fullscreen" class="home-demo-modal__fullscreen" type="button" aria-label="Fullscreen" data-i18n-aria="home.sol.fullscreen" data-i18n="home.sol.fullscreen">Fullscreen</button>
+      <video id="home-demo-video" class="home-demo-video" controls="" preload="metadata" playsinline="">
+        <source src="media/darkgpt-demo.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas la vidéo HTML5.
+      </video>
+    </div>
+
+    <div id="cookie-banner" class="cookie-banner" role="dialog" aria-label="Cookie information" data-i18n-aria="cookie.aria">
+      <p class="cookie-banner__text" data-i18n="cookie.text">Local storage for preferences (no targeted ads).</p>
+      <button type="button" id="cookie-accept" class="cookie-banner__btn" data-i18n="common.ok">OK</button>
+    </div>
+
+    <footer class="site-footer">
+      <div class="container site-footer__grid">
+        <div>
+          <a class="logo site-footer__brand" href="./index.html">Dark<span>Claude</span></a>
+          <p class="site-footer__text" data-i18n="footer.tagline">Artificial intelligence, unleashed.</p>
+          <div class="site-footer__social">
+            <a href="https://chat.whatsapp.com/LnuE7yJ0MhX2pPyrdMMbxD" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 8.5c.3 2.6 2.9 5.2 5.5 5.5l1.3-1.3-2-1-1 .7a5 5 0 0 1-2.4-2.4l.7-1-1-2z" fill="currentColor"/></svg></a>
+            <a href="https://t.me/+eSmSob1eM6QzNDU0" target="_blank" rel="noopener noreferrer" aria-label="Telegram"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M21 4 3 11l5.5 2L10 19l3-3.5 4.5 3.3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></a>
+          </div>
+        </div>
+        <div>
+          <h4 data-i18n="footer.product">Product</h4>
+          <a href="#fonctionnalites" data-i18n="footer.features">Features</a>
+          <a href="#pourquoi" data-i18n="footer.compare">Why DarkClaude</a>
+          <a href="./pricing.html" data-i18n="footer.pricing">Pricing</a>
+          <a href="./auth.html" data-i18n="footer.client">Client area</a>
+        </div>
+        <div>
+          <h4 data-i18n="footer.community">Community</h4>
+          <a href="https://chat.whatsapp.com/LnuE7yJ0MhX2pPyrdMMbxD" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          <a href="https://t.me/+eSmSob1eM6QzNDU0" target="_blank" rel="noopener noreferrer">Telegram</a>
+          <a href="./contact.html" data-i18n="footer.contact">Contact</a>
+          <a href="./pricing.html#faq" data-i18n="footer.faq">FAQ</a>
+        </div>
+        <div>
+          <h4 data-i18n="footer.legal">Legal</h4>
+          <a href="./mentions-legales.html" data-i18n="footer.mentions">Legal notice</a>
+          <a href="./cgu.html" data-i18n="footer.terms">Terms</a>
+          <a href="./confidentialite.html" data-i18n="footer.privacy">Privacy</a>
+        </div>
+      </div>
+      <div class="container site-footer__bottom">
+        <p data-i18n="footer.rights">© 2026 DarkClaude. All rights reserved.</p>
+        <p class="site-footer__status"><span class="dot"></span> <span data-i18n="footer.status">All systems operational</span></p>
+      </div>
+    </footer>
+
+    <script src="js/i18n.js"></script>
+    <script src="js/disclaimer.js"></script>
+    <script src="js/app.js"></script>
+  
+
+</body></html>
