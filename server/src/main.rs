@@ -5,7 +5,7 @@ mod config;
 mod error;
 mod plans;
 
-use axum::{extract::{DefaultBodyLimit, State}, http::{HeaderName, HeaderValue, StatusCode}, routing::{get, post}, Json, Router};
+use axum::{extract::{DefaultBodyLimit, State}, http::{header, HeaderName, HeaderValue, Method, StatusCode}, routing::{get, post}, Json, Router};
 use serde_json::{json, Value};
 use sqlx::postgres::PgPoolOptions;
 use std::{sync::Arc, time::Duration};
@@ -33,7 +33,7 @@ async fn runtime(State(st): State<AppState>) -> Json<Value> {
 
 #[tokio::main]
 async fn main() {
-    dotenvy::dotenv().ok();
+    dotenvy::dotenv_override().ok();
     tracing_subscriber::fmt::init();
     let cfg = config::Config::from_env();
     if cfg.or_key.is_empty() { tracing::warn!("OPENROUTER_API_KEY est vide : le chat échouera."); }
@@ -48,6 +48,14 @@ async fn main() {
         http: reqwest::Client::builder().connect_timeout(Duration::from_secs(10)).build().expect("client http"),
         cfg: Arc::new(cfg.clone()),
     };
+
+    let origins: Vec<HeaderValue> = std::env::var("CORS_ORIGINS").unwrap_or_default().split(',').filter_map(|s| s.trim().parse().ok()).collect();
+    let cors = tower_http::cors::CorsLayer::new()
+        .allow_origin(origins)
+        .allow_methods([Method::GET, Method::POST, Method::OPTIONS])
+        .allow_headers([header::CONTENT_TYPE, HeaderName::from_static("x-session-token")])
+        .expose_headers([HeaderName::from_static("x-resolved-model"), HeaderName::from_static("x-chat-mode")])
+        .max_age(Duration::from_secs(3600));
 
     let app = Router::new()
         .route("/api/health", get(health))
@@ -68,6 +76,7 @@ async fn main() {
         .route("/api/admin/payments/:id/reject", post(billing::reject))
         .route("/api/admin/users/:id/plan", post(billing::set_plan))
         .fallback_service(ServeDir::new(&cfg.public_dir))
+        .layer(cors)
         .layer(DefaultBodyLimit::max(8 * 1024 * 1024))
         .layer(SetResponseHeaderLayer::overriding(HeaderName::from_static("x-content-type-options"), HeaderValue::from_static("nosniff")))
         .layer(SetResponseHeaderLayer::overriding(HeaderName::from_static("x-frame-options"), HeaderValue::from_static("DENY")))

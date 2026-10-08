@@ -4,6 +4,7 @@
 <label for="m">Message</label><textarea id="m" rows="5" required></textarea>
 <button class="dc-btn dc-btn--block" type="submit">Envoyer</button></form><p class="dc-msg" id="s"></p>
 <p class="dc-muted">Support : <a href="https://chat.whatsapp.com/LnuE7yJ0MhX2pPyrdMMbxD">WhatsApp</a> · <a href="https://t.me/+eSmSob1eM6QzNDU0">Telegram</a></p></div></main>
+<script src="js/api-base.js"></script>
 <script src="js/dc-common.js"></script>
 <script>document.getElementById("f").onsubmit=async(ev)=>{ev.preventDefault();const s=document.getElementById("s");
 try{await DC.api("/api/contact",{method:"POST",body:{name:n.value,email:e.value,message:m.value}});DC.msg(s,"Message envoyé. Merci !",true);ev.target.reset();}catch(x){DC.msg(s,x.message);}};</script></body></html>

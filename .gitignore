@@ -1,36 +1,4 @@
-# Node / JS (pour public/ ou server/ si JS)
-node_modules/
-dist/
-build/
-*.log
-npm-debug.log*
-yarn-error.log*
-
-# Python (si server/ est en Python)
-__pycache__/
-*.py[cod]
-venv/
-.venv/
-env/
-*.egg-info/
-
-# Rust (si server/ est en Rust)
-target/
-Cargo.lock
-
-# Env / secrets ⚠️ IMPORTANT
 .env
-.env.local
-.env.*.local
-*.pem
-*.key
-
-# OS / IDE
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-*.swp
-
-# Termux / tmp
-*.tar.gz
+server/.env
+server/target/
+*.log
