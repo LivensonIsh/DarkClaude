@@ -15,7 +15,7 @@ const $ = (i) => document.getElementById(i);
 const log = $("log"), history = []; let image = null, busy = false;
 if (!DC.token()) location.replace("./auth.html?mode=login");
 const bubble = (cls, text) => { const d = document.createElement("div"); d.className = "dc-bubble " + cls; d.textContent = text; log.appendChild(d); log.scrollTop = log.scrollHeight; return d; };
-async function me() { try { const { user } = await DC.api("/api/auth/me"); localStorage.setItem("darkclaude_user", JSON.stringify(user)); $("plan").textContent = user.plan + " · " + user.dailyLimit + " msg/jour"; if (user.admin) $("plan").insertAdjacentHTML("afterend", ' <a href="./admin.html">Admin</a>'); } catch { DC.clear(); location.replace("./auth.html?mode=login"); } }
+async function me() { try { const { user } = await DC.api("/api/auth/me"); localStorage.setItem("darkclaude_user", JSON.stringify(user)); $("plan").textContent = user.plan + " · " + user.dailyLimit + " msg/jour"; if (user.admin && !document.getElementById("adm")) $("plan").insertAdjacentHTML("afterend", ' <a id="adm" href="./admin.html">Admin</a>'); } catch { DC.clear(); location.replace("./auth.html?mode=login"); } }
 $("out").onclick = async (e) => { e.preventDefault(); try { await DC.api("/api/auth/logout", { method: "POST" }); } catch {} DC.clear(); location.replace("./"); };
 $("img").onchange = (e) => { const f = e.target.files[0]; if (!f) return; if (f.size > 4 * 1024 * 1024) { $("err").textContent = "Image > 4 Mo"; return; }
   const r = new FileReader(); r.onload = () => { image = { mime: f.type, dataUrl: r.result, name: f.name }; $("imgn").textContent = f.name; }; r.readAsDataURL(f); };
