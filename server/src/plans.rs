@@ -21,7 +21,7 @@ pub struct Plan {
 pub fn build_plans(cfg: &Config) -> Vec<Plan> {
     let htg = |eur: f64| ((eur * cfg.fx / 50.0).round() * 50.0) as i64;
     vec![
-        Plan { id: "free", label: "Gratuit", price_htg: 0, period: None, daily: 2, tier: "free", vision: false, search: false, analyse: false },
+        Plan { id: "free", label: "Gratuit", price_htg: 0, period: None, daily: 1, tier: "free", vision: false, search: false, analyse: false },
         Plan { id: "starter", label: "Standard", price_htg: htg(9.9), period: Some("month"), daily: 60, tier: "standard", vision: false, search: false, analyse: false },
         Plan { id: "unlimited", label: "Premium", price_htg: htg(20.0), period: Some("month"), daily: 300, tier: "premium", vision: true, search: true, analyse: true },
         Plan { id: "lifetime", label: "Lifetime", price_htg: htg(cfg.lifetime_eur), period: Some("lifetime"), daily: 1000, tier: "premium", vision: true, search: true, analyse: true },

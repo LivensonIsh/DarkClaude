@@ -1,4 +1,5 @@
 use crate::{auth::{user_dto, AdminUser, AuthUser}, error::*, AppState};
+use chrono::{DateTime, Utc};
 use axum::{extract::{Path, Query, State}, Json};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -110,5 +111,19 @@ pub async fn set_plan(State(st): State<AppState>, _a: AdminUser, Path(id): Path<
     } else {
         activate(&st.db, id, &plan, b.days.unwrap_or(30).clamp(1, 3650)).await?;
     }
+    Ok(Json(json!({ "ok": true })))
+}
+
+#[derive(sqlx::FromRow, Serialize)]
+pub struct MsgRow { id: i64, role: String, content: String, created_at: DateTime<Utc> }
+
+pub async fn history(State(st): State<AppState>, AuthUser(u, _): AuthUser) -> ApiResult<Json<Value>> {
+    let rows: Vec<MsgRow> = sqlx::query_as("SELECT id,role,content,created_at FROM messages WHERE user_id=$1 ORDER BY created_at ASC LIMIT 300")
+        .bind(u.id).fetch_all(&st.db).await?;
+    Ok(Json(json!({ "ok": true, "messages": rows })))
+}
+
+pub async fn clear_history(State(st): State<AppState>, AuthUser(u, _): AuthUser) -> ApiResult<Json<Value>> {
+    sqlx::query("DELETE FROM messages WHERE user_id=$1").bind(u.id).execute(&st.db).await?;
     Ok(Json(json!({ "ok": true })))
 }

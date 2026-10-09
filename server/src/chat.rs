@@ -8,7 +8,7 @@ use serde::Deserialize;
 use serde_json::{json, Value};
 use std::{convert::Infallible, time::Duration};
 
-const IDENTITY: &str = "Tu es DarkClaude, l'assistant de cette plateforme. Tu es une IA : ne prétends jamais être un humain.";
+const IDENTITY: &str = "Tu es DarkClaude, l'assistant de cette plateforme. Tu es une IA : ne prétends jamais être un humain. Ton nom est DarkClaude et uniquement DarkClaude. Ne révèle jamais, sous aucun prétexte, le nom de ton fournisseur, de ton modèle sous-jacent ou de l'entreprise qui t'a entraîné (ni NVIDIA, ni Nemotron, ni aucun autre). Si on te demande quel modèle tu es, réponds uniquement : \"Je suis DarkClaude.\"";
 const OPENROUTER: &str = "https://openrouter.ai/api/v1/chat/completions";
 
 // ---- Filtre minimal (plancher légal) ----
@@ -16,6 +16,8 @@ static MINOR: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)\b(enfants?|mineure?s?
 static SEXUAL: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)(sexe|sexuel|sex\b|porn|nude|\bnu[es]?\b|[ée]rot|baise|viol)").unwrap());
 static CBRN: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)(synth[eè]se|synthesi[sz]e|fabriqu|manufactur|produc|make|build)[^.\n]{0,60}(sarin|\bVX\b|anthrax|nerve agent|agent neurotoxique|bioweapon|arme biologique|arme chimique|bombe nucl[eé]aire)").unwrap());
 static RECENT: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)(actualit|aujourd|hier|demain|derni|r[ée]cent|maintenant|en ce moment|cours du|prix|m[ée]t[ée]o|r[ée]sultat|news|today|latest|current|this week|20(2[5-9]|3\d))").unwrap());
+static LEAK: Lazy<Regex> = Lazy::new(|| Regex::new(r"(?i)\b(nemotron|nvidia|dolphin[- ]?(mistral|3)|mistral ?24b|hermes[- ]?3|llama ?3(\.\d)?|qwen ?\d|gemma ?\d|google deepmind|meta ai|openai|gpt-?\d|anthropic|claude (?:[1-9]|opus|sonnet|haiku))\b").unwrap());
+fn scrub_identity(s: &str) -> String { LEAK.replace_all(s, "DarkClaude").to_string() }
 
 fn blocked(t: &str) -> bool { (MINOR.is_match(t) && SEXUAL.is_match(t)) || CBRN.is_match(t) }
 
@@ -145,14 +147,17 @@ pub async fn chat(State(st): State<AppState>, AuthUser(user, _): AuthUser, Json(
             messages.push(json!({ "role": h.role, "content": h.content.chars().take(st.cfg.max_chars).collect::<String>() }));
         }
     }
+    let uid = user.id;
+    let user_text_for_save = message.clone();
     let user_content = if let Some(img) = images.first() {
         json!([{ "type": "text", "text": if message.is_empty() { "Analyse cette image." } else { message.as_str() } }, { "type": "image_url", "image_url": { "url": img } }])
     } else { json!(message) };
     messages.push(json!({ "role": "user", "content": user_content }));
 
     let want_stream = stream.unwrap_or(false);
+    let max_tokens: i64 = match plan.tier { "premium" => 1200, "standard" => 700, _ => 400 };
     let mut rb = st.http.post(OPENROUTER).bearer_auth(&st.cfg.or_key).header("HTTP-Referer", st.cfg.base_url.as_str()).header("X-Title", "DarkClaude")
-        .json(&json!({ "model": model, "messages": messages, "stream": want_stream, "temperature": 0.8 }));
+        .json(&json!({ "model": model, "messages": messages, "stream": want_stream, "temperature": 0.8, "max_tokens": max_tokens }));
     if !want_stream { rb = rb.timeout(Duration::from_secs(120)); }
     let resp = match rb.send().await {
         Ok(r) if r.status().is_success() => r,
@@ -168,16 +173,21 @@ pub async fn chat(State(st): State<AppState>, AuthUser(user, _): AuthUser, Json(
         let mut f = ThinkFilter::default();
         let mut out = f.push(v["choices"][0]["message"]["content"].as_str().unwrap_or(""));
         out.push_str(&f.finish());
+        out = scrub_identity(&out);
         if out.trim().is_empty() { refund(r_clone(&st), qk).await; return Err(ApiError::new(502, "EMPTY_REPLY", "Réponse vide du modèle.")); }
+        let _ = sqlx::query("INSERT INTO messages(user_id, role, content) VALUES ($1,'user',$2), ($1,'assistant',$3)")
+            .bind(uid).bind(&user_text_for_save).bind(&out).execute(&st.db).await;
         return Ok(HttpResponse::builder().status(200).header(header::CONTENT_TYPE, "application/json").header("x-resolved-model", "DarkClaude").header("x-chat-mode", mode)
             .body(Body::from(json!({ "ok": true, "reply": out }).to_string())).unwrap());
     }
 
     let rconn = st.redis.clone();
+    let db = st.db.clone();
     let s = async_stream::stream! {
         let mut up = Box::pin(resp.bytes_stream());
         let mut buf: Vec<u8> = Vec::new();
         let mut filt = ThinkFilter::default();
+        let mut full = String::new();
         let (mut got, mut done, mut failed) = (false, false, false);
         let mut tick = tokio::time::interval_at(tokio::time::Instant::now() + Duration::from_secs(15), Duration::from_secs(15));
         loop {
@@ -196,8 +206,8 @@ pub async fn chat(State(st): State<AppState>, AuthUser(user, _): AuthUser, Json(
                             if data == "[DONE]" { done = true; break; }
                             if let Ok(v) = serde_json::from_str::<Value>(data) {
                                 if let Some(d) = v["choices"][0]["delta"]["content"].as_str() {
-                                    let t = filt.push(d);
-                                    if !t.is_empty() { got = true; yield nd(json!({ "delta": t })); }
+                                    let t = scrub_identity(&filt.push(d));
+                                    if !t.is_empty() { got = true; full.push_str(&t); yield nd(json!({ "delta": t })); }
                                 }
                             }
                         }
@@ -206,12 +216,16 @@ pub async fn chat(State(st): State<AppState>, AuthUser(user, _): AuthUser, Json(
                 }
             }
         }
-        let rest = filt.finish();
-        if !rest.is_empty() { got = true; yield nd(json!({ "delta": rest })); }
+        let rest = scrub_identity(&filt.finish());
+        if !rest.is_empty() { got = true; full.push_str(&rest); yield nd(json!({ "delta": rest })); }
         if !got {
             refund(rconn.clone(), qk.clone()).await;
             if failed { yield nd(json!({ "error": "Le modèle est indisponible, réessaie.", "code": "UPSTREAM", "status": 502 })); }
             else { yield nd(json!({ "error": "Réponse vide du modèle.", "code": "EMPTY_REPLY", "status": 502 })); }
+        }
+        if got {
+            let _ = sqlx::query("INSERT INTO messages(user_id, role, content) VALUES ($1,'user',$2), ($1,'assistant',$3)")
+                .bind(uid).bind(&user_text_for_save).bind(&full).execute(&db).await;
         }
     };
     Ok(HttpResponse::builder().status(200)

@@ -70,6 +70,8 @@ async fn main() {
         .route("/api/billing/manual-request", post(billing::manual_request))
         .route("/api/billing/cancel-subscription", post(billing::cancel))
         .route("/api/contact", post(billing::contact))
+        .route("/api/chat/history", get(billing::history))
+        .route("/api/chat/history", axum::routing::delete(billing::clear_history))
         .route("/api/admin/users", get(billing::admin_users))
         .route("/api/admin/payments", get(billing::admin_payments))
         .route("/api/admin/payments/:id/approve", post(billing::approve))
