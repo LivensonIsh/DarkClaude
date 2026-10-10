@@ -5,7 +5,7 @@
 <div class="dc-chatlog" id="log"><div class="dc-bubble a">Bienvenue. Je suis DarkClaude. Pose ta question.</div></div>
 <form class="dc-compose" id="f">
 <div class="dc-bar" style="width:100%"><select id="mode" aria-label="Mode"><option value="nolimit">No Limit</option><option value="code">Code</option><option value="analyse">Analyse</option></select>
-<label class="dc-btn dc-btn--ghost" style="padding:6px 12px;margin:0;cursor:pointer">Image<input id="img" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden></label><span id="imgn" class="dc-muted"></span><span id="err" class="dc-msg err" style="margin:0"></span></div>
+<label class="dc-btn dc-btn--ghost" style="padding:6px 12px;margin:0;cursor:pointer">Image<input id="img" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden></label><span id="imgn" class="dc-muted"></span><a href="#" id="imgx" class="dc-muted" style="display:none">✕</a><span id="err" class="dc-msg err" style="margin:0"></span></div>
 <textarea id="m" rows="1" placeholder="Écris ton message…" maxlength="4000"></textarea>
 <button class="dc-btn" id="go" type="submit">Envoyer</button></form>
 <script src="js/api-base.js"></script>
@@ -31,7 +31,8 @@ $("clr").onclick = async (e) => {
 };
 $("out").onclick = async (e) => { e.preventDefault(); try { await DC.api("/api/auth/logout", { method: "POST" }); } catch {} DC.clear(); location.replace("./"); };
 $("img").onchange = (e) => { const f = e.target.files[0]; if (!f) return; if (f.size > 4 * 1024 * 1024) { $("err").textContent = "Image > 4 Mo"; return; }
-  const r = new FileReader(); r.onload = () => { image = { mime: f.type, dataUrl: r.result, name: f.name }; $("imgn").textContent = f.name; }; r.readAsDataURL(f); };
+  const r = new FileReader(); r.onload = () => { image = { mime: f.type, dataUrl: r.result, name: f.name }; $("imgn").textContent = f.name; $("imgx").style.display = "inline"; }; r.readAsDataURL(f); };
+$("imgx").onclick = (e) => { e.preventDefault(); image = null; $("imgn").textContent = ""; $("imgx").style.display = "none"; $("img").value = ""; };
 $("m").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !/Mobi|Android/i.test(navigator.userAgent)) { e.preventDefault(); $("f").requestSubmit(); } });
 $("m").addEventListener("input", (e) => { e.target.style.height = "auto"; e.target.style.height = Math.min(e.target.scrollHeight, 160) + "px"; });
 $("f").onsubmit = async (e) => {

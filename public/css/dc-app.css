@@ -20,7 +20,7 @@ table{width:100%;border-collapse:collapse;font-size:.88rem}th,td{padding:8px;bor
 .dc-tablewrap{overflow-x:auto}
 /* Chat */
 body.dc-chat{display:flex;flex-direction:column;height:100dvh;min-height:0}
-.dc-chatlog{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.dc-chatlog{flex:1;min-height:0;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
 .dc-bubble{max-width:min(760px,92%);padding:12px 14px;border-radius:14px;white-space:pre-wrap;word-wrap:break-word;overflow-wrap:anywhere}
 .dc-bubble.u{align-self:flex-end;background:#0a3d24;border:1px solid rgba(0,255,136,.3)}
 .dc-bubble.a{align-self:flex-start;background:#06100b;border:1px solid #14402a}
