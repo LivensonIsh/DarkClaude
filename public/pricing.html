@@ -3,11 +3,16 @@
 <div class="dc-grid" id="plans"></div>
 <div class="dc-card" style="margin-top:22px" id="pay" hidden>
 <h2>Payer par NatCash ou MonCash</h2>
-<p class="dc-muted">1) Envoie le montant du plan au numéro ci-dessous. 2) Entre la référence de la transaction. 3) Ton plan est activé après vérification par l'équipe.</p>
+<p class="dc-muted">1) Envoie le montant du plan au numéro ci-dessous. 2) Prends une capture d'écran de la confirmation. 3) Remplis le formulaire. 4) Ton plan est activé après vérification par l'équipe.</p>
 <p id="numbers"></p>
 <label for="pl">Plan</label><select id="pl"></select>
 <label for="me">Méthode</label><select id="me"><option value="natcash">NatCash</option><option value="moncash">MonCash</option></select>
 <label for="rf">Référence de la transaction</label><input id="rf">
+<label for="snd">Numéro qui a transféré l'argent</label><input id="snd" placeholder="Ex: 509XXXXXXXX">
+<label for="agt">Qui a fait le transfert ?</label><select id="agt"><option value="moi">C'est moi</option><option value="agent">Chez un agent</option></select>
+<label for="prf">Capture d'écran de la preuve de paiement (obligatoire)</label><input id="prf" type="file" accept="image/png,image/jpeg,image/webp">
+<p id="prfn" class="dc-muted"></p>
+<label for="nts">Notes (optionnel)</label><textarea id="nts" rows="3" placeholder="Infos utiles pour l'équipe"></textarea>
 <button class="dc-btn dc-btn--block" id="sub">J'ai payé : demander l'activation</button><p class="dc-msg" id="m"></p></div>
 <p class="dc-muted" id="note" style="margin-top:20px">Conversions indicatives depuis l'euro. Plan Gratuit : 2 messages par jour.</p><section id="faq" style="margin-top:34px"><h2>Questions fréquentes</h2>
 <details class="dc-faq" open><summary>Standard, Premium ou Lifetime : lequel choisir ?</summary><p>Standard pour un usage régulier avec un modèle rapide. Premium si tu veux le raisonnement, l'analyse d'images et la recherche web en temps réel. Lifetime donne tout Premium, à vie, en un seul paiement.</p></details>
@@ -30,5 +35,24 @@ const per={month:"par mois",lifetime:"paiement unique"};
  if(DC.token()){ try{const i=await DC.api("/api/billing/pay-info"); if(i.manual){$("pay").hidden=false;$("numbers").innerHTML='NatCash : <b>'+(i.natcash||'—')+'</b><br>MonCash : <b>'+(i.moncash||'—')+'</b>';}}catch{} }
  else { $("note").insertAdjacentHTML("afterbegin",'<a href="./auth.html?mode=signup">Crée un compte</a> pour payer. '); }
 })();
-$("sub").onclick=async()=>{try{const d=await DC.api("/api/billing/manual-request",{method:"POST",body:{plan:$("pl").value,method:$("me").value,reference:$("rf").value}});DC.msg($("m"),d.message,true);}catch(e){DC.msg($("m"),e.message);}};
+let proofData = null;
+$("prf").onchange = (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  if (f.size > 4 * 1024 * 1024) { DC.msg($("m"), "Image > 4 Mo"); return; }
+  const r = new FileReader();
+  r.onload = () => { proofData = r.result; $("prfn").textContent = f.name; };
+  r.readAsDataURL(f);
+};
+$("sub").onclick=async()=>{
+  if (!proofData) { DC.msg($("m"), "Ajoute la capture d'écran de ta preuve de paiement."); return; }
+  if (!$("snd").value.trim()) { DC.msg($("m"), "Indique le numéro qui a transféré l'argent."); return; }
+  try{
+    const d=await DC.api("/api/billing/manual-request",{method:"POST",body:{
+      plan:$("pl").value, method:$("me").value, reference:$("rf").value,
+      proof_data_url: proofData, sender_number: $("snd").value.trim(),
+      sender_is_agent: $("agt").value === "agent", notes: $("nts").value.trim()
+    }});
+    DC.msg($("m"),d.message,true);
+  }catch(e){DC.msg($("m"),e.message);}
+};
 </script></body></html>

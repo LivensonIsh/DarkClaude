@@ -41,3 +41,24 @@ CREATE TABLE IF NOT EXISTS messages (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_messages_user ON messages(user_id, created_at);
+CREATE TABLE IF NOT EXISTS conversations (
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL DEFAULT 'Conversation',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_conversations_user ON conversations(user_id, created_at);
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS conversation_id BIGINT REFERENCES conversations(id) ON DELETE CASCADE;
+DO $$
+DECLARE r RECORD; cid BIGINT;
+BEGIN
+  FOR r IN SELECT DISTINCT user_id FROM messages WHERE conversation_id IS NULL LOOP
+    INSERT INTO conversations(user_id, title) VALUES (r.user_id, 'Conversation') RETURNING id INTO cid;
+    UPDATE messages SET conversation_id = cid WHERE user_id = r.user_id AND conversation_id IS NULL;
+  END LOOP;
+END $$;
+CREATE INDEX IF NOT EXISTS idx_messages_conv ON messages(conversation_id, created_at);
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS proof_data_url TEXT;
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS sender_number TEXT;
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS sender_is_agent BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS notes TEXT;

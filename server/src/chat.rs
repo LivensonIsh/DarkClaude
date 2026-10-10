@@ -70,6 +70,7 @@ pub struct Img { #[serde(rename = "dataUrl")] data_url: String }
 pub struct ChatBody {
     message: Option<String>, mode: Option<String>, hardness: Option<f64>, lang: Option<String>,
     stream: Option<bool>, history: Option<Vec<Hist>>, images: Option<Vec<Img>>,
+    conversation_id: Option<i64>,
 }
 
 fn valid_img(d: &str) -> bool {
@@ -92,7 +93,7 @@ async fn refund(mut r: redis::aio::ConnectionManager, key: String) {
 }
 
 pub async fn chat(State(st): State<AppState>, AuthUser(user, _): AuthUser, Json(b): Json<ChatBody>) -> ApiResult<Response> {
-    let ChatBody { message, mode, hardness, lang, stream, history, images } = b;
+    let ChatBody { message, mode, hardness, lang, stream, history, images, conversation_id } = b;
     let message = message.unwrap_or_default().trim().to_string();
     let plan_id = plans::effective_plan(&user.plan, user.premium_until);
     let plan = plans::find(&st.plans, &plan_id).clone();
@@ -149,6 +150,16 @@ pub async fn chat(State(st): State<AppState>, AuthUser(user, _): AuthUser, Json(
     }
     let uid = user.id;
     let user_text_for_save = message.clone();
+    let conv_id: i64 = match conversation_id {
+        Some(cid) => {
+            let owner: Option<(i64,)> = sqlx::query_as("SELECT user_id FROM conversations WHERE id=$1").bind(cid).fetch_optional(&st.db).await?;
+            match owner { Some((o,)) if o == uid => cid, _ => return Err(ApiError::new(403, "FORBIDDEN", "Conversation invalide")) }
+        }
+        None => {
+            let row: (i64,) = sqlx::query_as("INSERT INTO conversations(user_id) VALUES ($1) RETURNING id").bind(uid).fetch_one(&st.db).await?;
+            row.0
+        }
+    };
     let user_content = if let Some(img) = images.first() {
         json!([{ "type": "text", "text": if message.is_empty() { "Analyse cette image." } else { message.as_str() } }, { "type": "image_url", "image_url": { "url": img } }])
     } else { json!(message) };
@@ -175,9 +186,9 @@ pub async fn chat(State(st): State<AppState>, AuthUser(user, _): AuthUser, Json(
         out.push_str(&f.finish());
         out = scrub_identity(&out);
         if out.trim().is_empty() { refund(r_clone(&st), qk).await; return Err(ApiError::new(502, "EMPTY_REPLY", "Réponse vide du modèle.")); }
-        let _ = sqlx::query("INSERT INTO messages(user_id, role, content) VALUES ($1,'user',$2), ($1,'assistant',$3)")
-            .bind(uid).bind(&user_text_for_save).bind(&out).execute(&st.db).await;
-        return Ok(HttpResponse::builder().status(200).header(header::CONTENT_TYPE, "application/json").header("x-resolved-model", "DarkClaude").header("x-chat-mode", mode)
+        let _ = sqlx::query("INSERT INTO messages(user_id, conversation_id, role, content) VALUES ($1,$2,'user',$3), ($1,$2,'assistant',$4)")
+            .bind(uid).bind(conv_id).bind(&user_text_for_save).bind(&out).execute(&st.db).await;
+        return Ok(HttpResponse::builder().status(200).header(header::CONTENT_TYPE, "application/json").header("x-resolved-model", "DarkClaude").header("x-chat-mode", mode).header("x-conversation-id", conv_id.to_string())
             .body(Body::from(json!({ "ok": true, "reply": out }).to_string())).unwrap());
     }
 
@@ -224,13 +235,13 @@ pub async fn chat(State(st): State<AppState>, AuthUser(user, _): AuthUser, Json(
             else { yield nd(json!({ "error": "Réponse vide du modèle.", "code": "EMPTY_REPLY", "status": 502 })); }
         }
         if got {
-            let _ = sqlx::query("INSERT INTO messages(user_id, role, content) VALUES ($1,'user',$2), ($1,'assistant',$3)")
-                .bind(uid).bind(&user_text_for_save).bind(&full).execute(&db).await;
+            let _ = sqlx::query("INSERT INTO messages(user_id, conversation_id, role, content) VALUES ($1,$2,'user',$3), ($1,$2,'assistant',$4)")
+                .bind(uid).bind(conv_id).bind(&user_text_for_save).bind(&full).execute(&db).await;
         }
     };
     Ok(HttpResponse::builder().status(200)
         .header(header::CONTENT_TYPE, "application/x-ndjson; charset=utf-8").header(header::CACHE_CONTROL, "no-store")
-        .header("x-accel-buffering", "no").header("x-resolved-model", "DarkClaude").header("x-chat-mode", mode)
+        .header("x-accel-buffering", "no").header("x-resolved-model", "DarkClaude").header("x-chat-mode", mode).header("x-conversation-id", conv_id.to_string())
         .body(Body::from_stream(s)).unwrap())
 }
 

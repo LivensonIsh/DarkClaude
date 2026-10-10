@@ -13,18 +13,29 @@ pub async fn pay_info(State(st): State<AppState>, _u: AuthUser) -> Json<Value> {
 }
 
 #[derive(Deserialize)]
-pub struct ManualReq { plan: Option<String>, method: Option<String>, reference: Option<String> }
+pub struct ManualReq {
+    plan: Option<String>, method: Option<String>, reference: Option<String>,
+    proof_data_url: Option<String>, sender_number: Option<String>, sender_is_agent: Option<bool>, notes: Option<String>,
+}
 
 pub async fn manual_request(State(st): State<AppState>, AuthUser(u, _): AuthUser, Json(b): Json<ManualReq>) -> ApiResult<Json<Value>> {
     if !st.cfg.manual { return Err(ApiError::new(503, "DISABLED", "Paiement manuel désactivé")); }
     let plan_id = b.plan.unwrap_or_default();
     let method = b.method.unwrap_or_default();
     let reference = b.reference.unwrap_or_default().trim().chars().take(80).collect::<String>();
+    let proof = b.proof_data_url.unwrap_or_default();
+    let sender_number = b.sender_number.unwrap_or_default().trim().chars().take(30).collect::<String>();
+    let notes = b.notes.unwrap_or_default().trim().chars().take(500).collect::<String>();
     let plan = st.plans.iter().find(|p| p.id == plan_id && p.id != "free");
     let Some(plan) = plan else { return Err(ApiError::bad("Plan, méthode et référence de transaction requis")) };
     if (method != "natcash" && method != "moncash") || reference.len() < 4 { return Err(ApiError::bad("Plan, méthode et référence de transaction requis")); }
-    let id: (i64,) = sqlx::query_as("INSERT INTO payments(user_id,plan,method,reference,amount_htg) VALUES($1,$2,$3,$4,$5) RETURNING id")
-        .bind(u.id).bind(plan.id).bind(&method).bind(&reference).bind(plan.price_htg).fetch_one(&st.db).await?;
+    if proof.len() < 20 || proof.len() > 6_000_000 || !proof.starts_with("data:image/") { return Err(ApiError::bad("La capture d'écran de preuve de paiement est obligatoire")); }
+    if sender_number.chars().count() < 8 { return Err(ApiError::bad("Le numéro qui a transféré l'argent est obligatoire")); }
+    let Some(sender_is_agent) = b.sender_is_agent else { return Err(ApiError::bad("Indique si c'est toi ou un agent qui a transféré l'argent")) };
+    let id: (i64,) = sqlx::query_as("INSERT INTO payments(user_id,plan,method,reference,amount_htg,proof_data_url,sender_number,sender_is_agent,notes) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id")
+        .bind(u.id).bind(plan.id).bind(&method).bind(&reference).bind(plan.price_htg)
+        .bind(&proof).bind(&sender_number).bind(sender_is_agent).bind(&notes)
+        .fetch_one(&st.db).await?;
     Ok(Json(json!({ "ok": true, "paymentId": id.0, "message": "Paiement en attente de validation (quelques minutes à quelques heures)." })))
 }
 
@@ -64,7 +75,7 @@ async fn activate<'e, E: sqlx::PgExecutor<'e>>(ex: E, uid: i64, plan: &str, days
 #[derive(sqlx::FromRow, Serialize)]
 struct UserRow { id: i64, email: String, username: String, plan: String, premium_until: Option<DateTime<Utc>>, is_admin: bool, created_at: DateTime<Utc> }
 #[derive(sqlx::FromRow, Serialize)]
-struct PayRow { id: i64, user_id: i64, plan: String, method: String, reference: String, amount_htg: i64, status: String, created_at: DateTime<Utc>, email: String, username: String }
+struct PayRow { id: i64, user_id: i64, plan: String, method: String, reference: String, amount_htg: i64, status: String, created_at: DateTime<Utc>, email: String, username: String, proof_data_url: Option<String>, sender_number: Option<String>, sender_is_agent: bool, notes: Option<String> }
 
 #[derive(Deserialize)]
 pub struct SearchQ { search: Option<String> }
@@ -81,7 +92,7 @@ pub async fn admin_users(State(st): State<AppState>, _a: AdminUser, Query(q): Qu
 }
 
 pub async fn admin_payments(State(st): State<AppState>, _a: AdminUser, Query(q): Query<StatusQ>) -> ApiResult<Json<Value>> {
-    let rows: Vec<PayRow> = sqlx::query_as("SELECT p.id,p.user_id,p.plan,p.method,p.reference,p.amount_htg,p.status,p.created_at,u.email,u.username \
+    let rows: Vec<PayRow> = sqlx::query_as("SELECT p.id,p.user_id,p.plan,p.method,p.reference,p.amount_htg,p.status,p.created_at,u.email,u.username,p.proof_data_url,p.sender_number,p.sender_is_agent,p.notes \
         FROM payments p JOIN users u ON u.id=p.user_id WHERE p.status=$1 ORDER BY p.id DESC LIMIT 200")
         .bind(q.status.unwrap_or_else(|| "pending".into())).fetch_all(&st.db).await?;
     Ok(Json(json!({ "ok": true, "payments": rows })))
@@ -116,10 +127,42 @@ pub async fn set_plan(State(st): State<AppState>, _a: AdminUser, Path(id): Path<
 #[derive(sqlx::FromRow, Serialize)]
 pub struct MsgRow { id: i64, role: String, content: String, created_at: DateTime<Utc> }
 
-pub async fn history(State(st): State<AppState>, AuthUser(u, _): AuthUser) -> ApiResult<Json<Value>> {
-    let rows: Vec<MsgRow> = sqlx::query_as("SELECT id,role,content,created_at FROM messages WHERE user_id=$1 ORDER BY created_at ASC LIMIT 300")
-        .bind(u.id).fetch_all(&st.db).await?;
+#[derive(Deserialize)]
+pub struct HistQuery { conversation_id: Option<i64> }
+
+pub async fn history(State(st): State<AppState>, AuthUser(u, _): AuthUser, Query(q): Query<HistQuery>) -> ApiResult<Json<Value>> {
+    let rows: Vec<MsgRow> = if let Some(cid) = q.conversation_id {
+        sqlx::query_as("SELECT id,role,content,created_at FROM messages WHERE user_id=$1 AND conversation_id=$2 ORDER BY created_at ASC LIMIT 300")
+            .bind(u.id).bind(cid).fetch_all(&st.db).await?
+    } else {
+        sqlx::query_as("SELECT id,role,content,created_at FROM messages WHERE user_id=$1 ORDER BY created_at ASC LIMIT 300")
+            .bind(u.id).fetch_all(&st.db).await?
+    };
     Ok(Json(json!({ "ok": true, "messages": rows })))
+}
+
+#[derive(sqlx::FromRow, Serialize)]
+pub struct ConvRow { id: i64, title: String, created_at: DateTime<Utc> }
+
+pub async fn list_conversations(State(st): State<AppState>, AuthUser(u, _): AuthUser) -> ApiResult<Json<Value>> {
+    let rows: Vec<ConvRow> = sqlx::query_as("SELECT id,title,created_at FROM conversations WHERE user_id=$1 ORDER BY created_at DESC LIMIT 50")
+        .bind(u.id).fetch_all(&st.db).await?;
+    Ok(Json(json!({ "ok": true, "conversations": rows })))
+}
+
+#[derive(Deserialize)]
+pub struct NewConvBody { title: Option<String> }
+
+pub async fn create_conversation(State(st): State<AppState>, AuthUser(u, _): AuthUser, Json(b): Json<NewConvBody>) -> ApiResult<Json<Value>> {
+    let title = b.title.unwrap_or_else(|| "Conversation".into());
+    let row: (i64,) = sqlx::query_as("INSERT INTO conversations(user_id, title) VALUES ($1,$2) RETURNING id")
+        .bind(u.id).bind(title.chars().take(80).collect::<String>()).fetch_one(&st.db).await?;
+    Ok(Json(json!({ "ok": true, "id": row.0 })))
+}
+
+pub async fn delete_conversation(State(st): State<AppState>, AuthUser(u, _): AuthUser, Path(id): Path<i64>) -> ApiResult<Json<Value>> {
+    sqlx::query("DELETE FROM conversations WHERE id=$1 AND user_id=$2").bind(id).bind(u.id).execute(&st.db).await?;
+    Ok(Json(json!({ "ok": true })))
 }
 
 pub async fn clear_history(State(st): State<AppState>, AuthUser(u, _): AuthUser) -> ApiResult<Json<Value>> {
