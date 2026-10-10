@@ -1,7 +1,7 @@
 <!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#020504"><title>Chat — DarkClaude</title><link rel="icon" href="images/darkgpt-mark.png"><link href="css/css2.css" rel="stylesheet"><link rel="stylesheet" href="css/dc-app.css"></head>
 <body class="dc-chat">
 <header class="dc-top"><a class="dc-logo" href="./index.html">Dark<span>Claude</span></a>
-<div class="dc-bar"><span id="plan" class="dc-muted"></span><a href="./pricing.html">Upgrade</a><a href="#" id="clr">Effacer</a><a href="#" id="out">Déconnexion</a></div></header>
+<div class="dc-bar"><span id="plan" class="dc-muted"></span><select id="convSel" aria-label="Conversation" style="max-width:150px"></select><a href="#" id="newConv">+ Nouvelle</a><a href="./pricing.html">Upgrade</a><a href="#" id="clr">Effacer</a><a href="#" id="out">Déconnexion</a></div></header>
 <div class="dc-chatlog" id="log"><div class="dc-bubble a">Bienvenue. Je suis DarkClaude. Pose ta question.</div></div>
 <form class="dc-compose" id="f">
 <div class="dc-bar" style="width:100%"><select id="mode" aria-label="Mode"><option value="nolimit">No Limit</option><option value="code">Code</option><option value="analyse">Analyse</option></select>
@@ -12,22 +12,59 @@
 <script src="js/dc-common.js"></script>
 <script>
 const $ = (i) => document.getElementById(i);
-const log = $("log"), history = []; let image = null, busy = false;
+const log = $("log"), history = []; let image = null, busy = false, convId = null;
 if (!DC.token()) location.replace("./auth.html?mode=login");
 const bubble = (cls, text) => { const d = document.createElement("div"); d.className = "dc-bubble " + cls; d.textContent = text; log.appendChild(d); log.scrollTop = log.scrollHeight; return d; };
-async function loadHistory() {
-  try {
-    const { messages: rows } = await DC.api("/api/chat/history");
-    log.innerHTML = "";
-    if (!rows.length) { bubble("a", "Bienvenue. Je suis DarkClaude. Pose ta question."); return; }
-    for (const r of rows) { bubble(r.role === "user" ? "u" : "a", r.content); if (r.role === "user") history.push({ role: "user", content: r.content }); else history.push({ role: "assistant", content: r.content }); }
-  } catch {}
+
+function paintConvSel(rows) {
+  $("convSel").innerHTML = rows.map(c => '<option value="' + c.id + '">' + (c.title || "Conversation") + ' · ' + new Date(c.created_at).toLocaleDateString() + '</option>').join("");
+  $("convSel").value = convId;
 }
+
+async function loadHistory() {
+  let rows = [];
+  try { rows = (await DC.api("/api/chat/conversations")).conversations; } catch {}
+  if (!rows.length) {
+    try { const d = await DC.api("/api/chat/conversations", { method: "POST", body: {} }); rows = [{ id: d.id, title: "Conversation", created_at: new Date().toISOString() }]; } catch {}
+  }
+  convId = rows[0].id;
+  paintConvSel(rows);
+  await openConversation(convId);
+}
+
+async function openConversation(id) {
+  convId = id; history.length = 0; log.innerHTML = "";
+  try {
+    const { messages: rows } = await DC.api("/api/chat/history?conversation_id=" + id);
+    if (!rows.length) { bubble("a", "Bienvenue. Je suis DarkClaude. Pose ta question."); return; }
+    for (const r of rows) { bubble(r.role === "user" ? "u" : "a", r.content); history.push({ role: r.role, content: r.content }); }
+  } catch { bubble("a", "Bienvenue. Je suis DarkClaude. Pose ta question."); }
+}
+
+$("convSel").onchange = (e) => openConversation(+e.target.value);
+
+$("newConv").onclick = async (e) => {
+  e.preventDefault();
+  try {
+    const d = await DC.api("/api/chat/conversations", { method: "POST", body: {} });
+    const rows = (await DC.api("/api/chat/conversations")).conversations;
+    paintConvSel(rows);
+    await openConversation(d.id);
+  } catch (er) { $("err").textContent = er.message; }
+};
+
 async function me() { try { const { user } = await DC.api("/api/auth/me"); localStorage.setItem("darkclaude_user", JSON.stringify(user)); $("plan").textContent = user.plan + " · " + user.dailyLimit + " msg/jour"; if (user.admin && !document.getElementById("adm")) $("plan").insertAdjacentHTML("afterend", ' <a id="adm" href="./admin.html">Admin</a>'); } catch { DC.clear(); location.replace("./auth.html?mode=login"); } }
+
 $("clr").onclick = async (e) => {
   e.preventDefault();
-  if (!confirm("Effacer tout ton historique de messages ?")) return;
-  try { await DC.api("/api/chat/history", { method: "DELETE" }); history.length = 0; log.innerHTML = ""; bubble("a", "Historique effacé."); } catch (er) { $("err").textContent = er.message; }
+  if (!confirm("Supprimer cette conversation ?")) return;
+  try {
+    await DC.api("/api/chat/conversations/" + convId, { method: "DELETE" });
+    const d = await DC.api("/api/chat/conversations", { method: "POST", body: {} });
+    const rows = (await DC.api("/api/chat/conversations")).conversations;
+    paintConvSel(rows);
+    await openConversation(d.id);
+  } catch (er) { $("err").textContent = er.message; }
 };
 $("out").onclick = async (e) => { e.preventDefault(); try { await DC.api("/api/auth/logout", { method: "POST" }); } catch {} DC.clear(); location.replace("./"); };
 $("img").onchange = (e) => { const f = e.target.files[0]; if (!f) return; if (f.size > 4 * 1024 * 1024) { $("err").textContent = "Image > 4 Mo"; return; }
@@ -40,16 +77,18 @@ $("f").onsubmit = async (e) => {
   busy = true; $("go").disabled = true; $("err").textContent = "";
   bubble("u", text || "(image)"); $("m").value = ""; $("m").style.height = "auto";
   const out = bubble("a", "…"); let full = "";
-  const body = { message: text, mode: $("mode").value, lang: localStorage.getItem("darkclaude_lang") || "fr", stream: true, history: history.slice(-24) };
+  const body = { message: text, mode: $("mode").value, lang: localStorage.getItem("darkclaude_lang") || "fr", stream: true, history: history.slice(-24), conversation_id: convId };
   if (image) body.images = [image];
   try {
     const r = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json", "x-session-token": DC.token() }, body: JSON.stringify(body) });
     if (!r.ok) { const d = await r.json().catch(() => ({})); const er = new Error(d.error || "Erreur"); er.status = r.status; throw er; }
+    const hdr = r.headers.get("x-conversation-id"); if (hdr) convId = +hdr;
     const rd = r.body.getReader(), dec = new TextDecoder(); let buf = "";
     for (;;) { const { done, value } = await rd.read(); if (done) break; buf += dec.decode(value, { stream: true });
       let i; while ((i = buf.indexOf("\n")) >= 0) { const l = buf.slice(0, i).trim(); buf = buf.slice(i + 1); if (!l) continue;
         const j = JSON.parse(l); if (j.error) throw new Error(j.error); if (j.delta) { full += j.delta; out.textContent = full; log.scrollTop = log.scrollHeight; } } }
-    history.push({ role: "user", content: text }, { role: "assistant", content: full }); image = null; $("imgn").textContent = ""; $("img").value = "";
+    history.push({ role: "user", content: text }, { role: "assistant", content: full }); image = null; $("imgn").textContent = ""; $("img").value = ""; $("imgx").style.display = "none";
+    log.scrollTop = log.scrollHeight;
   } catch (er) { out.remove(); $("err").textContent = er.message; if (er.status === 401) { DC.clear(); location.replace("./auth.html?mode=login"); } if (er.status === 402) $("err").innerHTML = er.message + ' <a href="./pricing.html">Voir les plans</a>'; }
   finally { busy = false; $("go").disabled = false; me(); }
 };
