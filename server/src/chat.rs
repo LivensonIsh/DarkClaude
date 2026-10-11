@@ -134,7 +134,12 @@ pub async fn chat(State(st): State<AppState>, AuthUser(user, _): AuthUser, Json(
         _ => "Réponds de façon directe et complète.",
     };
     let hard = hardness.unwrap_or(55.0).clamp(0.0, 100.0).round() as i64;
-    let mut sys = format!("{IDENTITY}\n{mode_txt}\nRéponds en {lang_name}. Niveau de franchise : {hard}/100.");
+    let reasoning_rule = match plan.tier {
+        "premium" => "AVANT de répondre : raisonne longuement en interne. Décompose, explore plusieurs angles, puis donne une réponse riche et structurée.",
+        "standard" => "Réfléchis brièvement avant de répondre. Réponse claire, points essentiels, sans digression.",
+        _ => "Réponds directement, en 3 à 5 phrases maximum. Pas d'introduction, pas de conclusion.",
+    };
+    let mut sys = format!("{IDENTITY}\n{mode_txt}\n{reasoning_rule}\nRéponds en {lang_name}. Niveau de franchise : {hard}/100.");
     if plan.search && RECENT.is_match(&message) {
         let ctx = web_search(&st, &message).await;
         if !ctx.is_empty() { sys.push_str(&format!("\n\nRésultats web récents (cite les sources si utile) :\n{ctx}")); }
@@ -142,7 +147,8 @@ pub async fn chat(State(st): State<AppState>, AuthUser(user, _): AuthUser, Json(
 
     let mut messages: Vec<Value> = vec![json!({ "role": "system", "content": sys })];
     let hist = history.unwrap_or_default();
-    let skip = hist.len().saturating_sub(24);
+    let hist_limit = match plan.tier { "premium" => 40, "standard" => 20, _ => 6 };
+    let skip = hist.len().saturating_sub(hist_limit);
     for h in hist.into_iter().skip(skip) {
         if h.role == "user" || h.role == "assistant" {
             messages.push(json!({ "role": h.role, "content": h.content.chars().take(st.cfg.max_chars).collect::<String>() }));
@@ -167,8 +173,9 @@ pub async fn chat(State(st): State<AppState>, AuthUser(user, _): AuthUser, Json(
 
     let want_stream = stream.unwrap_or(false);
     let max_tokens: i64 = match plan.tier { "premium" => 1200, "standard" => 700, _ => 400 };
+    let temp: f64 = match plan.tier { "premium" => 0.85, "standard" => 0.7, _ => 0.5 };
     let mut rb = st.http.post(OPENROUTER).bearer_auth(&st.cfg.or_key).header("HTTP-Referer", st.cfg.base_url.as_str()).header("X-Title", "DarkClaude")
-        .json(&json!({ "model": model, "messages": messages, "stream": want_stream, "temperature": 0.8, "max_tokens": max_tokens }));
+        .json(&json!({ "model": model, "messages": messages, "stream": want_stream, "temperature": temp, "max_tokens": max_tokens }));
     if !want_stream { rb = rb.timeout(Duration::from_secs(120)); }
     let resp = match rb.send().await {
         Ok(r) if r.status().is_success() => r,
@@ -188,12 +195,16 @@ pub async fn chat(State(st): State<AppState>, AuthUser(user, _): AuthUser, Json(
         if out.trim().is_empty() { refund(r_clone(&st), qk).await; return Err(ApiError::new(502, "EMPTY_REPLY", "Réponse vide du modèle.")); }
         let _ = sqlx::query("INSERT INTO messages(user_id, conversation_id, role, content) VALUES ($1,$2,'user',$3), ($1,$2,'assistant',$4)")
             .bind(uid).bind(conv_id).bind(&user_text_for_save).bind(&out).execute(&st.db).await;
+        let upsell = if plan.tier == "premium" { Value::Null } else {
+            json!({ "title": "Passe au Premium", "body": "Code complet, adresses, raisonnement pas à pas.", "url": "/upgrade" })
+        };
         return Ok(HttpResponse::builder().status(200).header(header::CONTENT_TYPE, "application/json").header("x-resolved-model", "DarkClaude").header("x-chat-mode", mode).header("x-conversation-id", conv_id.to_string())
-            .body(Body::from(json!({ "ok": true, "reply": out }).to_string())).unwrap());
+            .body(Body::from(json!({ "ok": true, "reply": out, "upsell": upsell }).to_string())).unwrap());
     }
 
     let rconn = st.redis.clone();
     let db = st.db.clone();
+    let tier = plan.tier.to_string();
     let s = async_stream::stream! {
         let mut up = Box::pin(resp.bytes_stream());
         let mut buf: Vec<u8> = Vec::new();
@@ -233,6 +244,13 @@ pub async fn chat(State(st): State<AppState>, AuthUser(user, _): AuthUser, Json(
             refund(rconn.clone(), qk.clone()).await;
             if failed { yield nd(json!({ "error": "Le modèle est indisponible, réessaie.", "code": "UPSTREAM", "status": 502 })); }
             else { yield nd(json!({ "error": "Réponse vide du modèle.", "code": "EMPTY_REPLY", "status": 502 })); }
+        }
+        if got && tier != "premium" {
+            yield nd(json!({ "upsell": {
+                "title": "Passe au Premium",
+                "body": "Code complet, adresses, raisonnement pas à pas.",
+                "url": "/upgrade"
+            }}));
         }
         if got {
             let _ = sqlx::query("INSERT INTO messages(user_id, conversation_id, role, content) VALUES ($1,$2,'user',$3), ($1,$2,'assistant',$4)")
