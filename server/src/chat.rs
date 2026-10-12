@@ -196,7 +196,7 @@ pub async fn chat(State(st): State<AppState>, AuthUser(user, _): AuthUser, Json(
         let _ = sqlx::query("INSERT INTO messages(user_id, conversation_id, role, content) VALUES ($1,$2,'user',$3), ($1,$2,'assistant',$4)")
             .bind(uid).bind(conv_id).bind(&user_text_for_save).bind(&out).execute(&st.db).await;
         let upsell = if plan.tier == "premium" { Value::Null } else {
-            json!({ "title": "Passe au Premium", "body": "Code complet, adresses, raisonnement pas à pas.", "url": "/upgrade" })
+            json!({ "title": "Passe au Premium", "body": "Code complet, adresses, raisonnement pas à pas.", "url": "/pricing.html" })
         };
         return Ok(HttpResponse::builder().status(200).header(header::CONTENT_TYPE, "application/json").header("x-resolved-model", "DarkClaude").header("x-chat-mode", mode).header("x-conversation-id", conv_id.to_string())
             .body(Body::from(json!({ "ok": true, "reply": out, "upsell": upsell }).to_string())).unwrap());
@@ -249,7 +249,7 @@ pub async fn chat(State(st): State<AppState>, AuthUser(user, _): AuthUser, Json(
             yield nd(json!({ "upsell": {
                 "title": "Passe au Premium",
                 "body": "Code complet, adresses, raisonnement pas à pas.",
-                "url": "/upgrade"
+                "url": "/pricing.html"
             }}));
         }
         if got {
