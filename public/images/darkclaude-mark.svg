@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><filter id="g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect width="512" height="512" rx="110" fill="#020504"/><g filter="url(#g)" fill="none" stroke="#00ff88" stroke-linecap="round" stroke-linejoin="round"><path d="M256 62 L424 159 V353 L256 450 L88 353 V159 Z" stroke-width="14"/><path d="M200 214 L266 266 L200 318" stroke-width="26"/><path d="M290 322 H350" stroke-width="26"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs><filter id="g" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+<rect width="512" height="512" rx="110" fill="#020504"/>
+<g filter="url(#g)" fill="none" stroke="#00ff88" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+<path d="M256 70c-86 0-150 62-150 148 0 54 24 88 48 112v52c0 14 10 24 24 24h20v-34h28v34h20v-34h28v34h20v-34h28v34h20c14 0 24-10 24-24v-52c24-24 48-58 48-112C406 132 342 70 256 70Z"/>
+<circle cx="196" cy="224" r="26"/><circle cx="316" cy="224" r="26"/>
+<path d="M222 300h68"/>
+<path d="M256 70V30M180 86l-24-32M332 86l24-32"/>
+<path d="M90 190H40M90 250H40M422 190h50M422 250h50"/>
+</g>
+</svg>
