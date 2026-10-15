@@ -14,7 +14,39 @@
 const $ = (i) => document.getElementById(i);
 const log = $("log"), history = []; let image = null, busy = false, convId = null;
 if (!DC.token()) location.replace("./auth.html?mode=login");
-const bubble = (cls, text) => { const d = document.createElement("div"); d.className = "dc-bubble " + cls; d.textContent = text; log.appendChild(d); log.scrollTop = log.scrollHeight; return d; };
+function escHtml(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function renderMD(raw){
+  const blocks=[]; let t=raw.replace(/```(\w*)\n([\s\S]*?)```/g,(m,lang,code)=>{
+    const i=blocks.length; blocks.push({lang:(lang||"text"),code:code.replace(/\n$/,"")}); return "\u0000"+i+"\u0000";
+  });
+  t=escHtml(t);
+  t=t.replace(/`([^`]+)`/g,(m,c)=>"<code>"+c+"</code>");
+  t=t.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>");
+  t=t.replace(/(^|\n)(-|\*) (.+)/g,"$1<li>$3</li>");
+  t=t.replace(/(<li>.*<\/li>\n?)+/gs,(m)=>"<ul>"+m+"</ul>");
+  t=t.split(/\n{2,}/).map(p=>p.trim()?( /^<(ul|li)/.test(p)?p:"<p>"+p.replace(/\n/g,"<br>")+"</p>" ):"").join("");
+  t=t.replace(/\u0000(\d+)\u0000/g,(m,i)=>{
+    const b=blocks[i]; const id="code"+Math.random().toString(36).slice(2);
+    return '<div class="dc-code"><div class="dc-code__bar"><span>'+escHtml(b.lang)+'</span><button class="dc-code__copy" type="button" data-copy-target="'+id+'">Copier</button></div><pre><code id="'+id+'">'+escHtml(b.code)+'</code></pre></div>';
+  });
+  return t || "";
+}
+log.addEventListener("click",(ev)=>{
+  const cb=ev.target.closest("[data-copy-target]");
+  if(cb){ const el=document.getElementById(cb.dataset.copyTarget); if(el){ navigator.clipboard.writeText(el.textContent).then(()=>{const o=cb.textContent;cb.textContent="Copié !";setTimeout(()=>cb.textContent=o,1200);}); } return; }
+  const mb=ev.target.closest("[data-copy-msg]");
+  if(mb){ navigator.clipboard.writeText(mb.dataset.copyMsg).then(()=>{const o=mb.textContent;mb.textContent="Copié !";setTimeout(()=>mb.textContent="Copier",1200);}); }
+});
+const bubble = (cls, text) => {
+  const d = document.createElement("div"); d.className = "dc-bubble " + cls;
+  if (cls === "a") { d.innerHTML = renderMD(text); const c=document.createElement("button"); c.className="dc-bubble__copy"; c.type="button"; c.textContent="Copier"; c.dataset.copyMsg=text; d.appendChild(c); }
+  else { d.textContent = text; }
+  log.appendChild(d); log.scrollTop = log.scrollHeight; return d;
+};
+const setBubbleText = (d, text) => {
+  d.innerHTML = renderMD(text);
+  const c=document.createElement("button"); c.className="dc-bubble__copy"; c.type="button"; c.textContent="Copier"; c.dataset.copyMsg=text; d.appendChild(c);
+};
 
 function paintConvSel(rows) {
   $("convSel").innerHTML = rows.map(c => '<option value="' + c.id + '">' + (c.title || "Conversation") + ' · ' + new Date(c.created_at).toLocaleDateString() + '</option>').join("");
@@ -86,7 +118,7 @@ $("f").onsubmit = async (e) => {
     const rd = r.body.getReader(), dec = new TextDecoder(); let buf = "";
     for (;;) { const { done, value } = await rd.read(); if (done) break; buf += dec.decode(value, { stream: true });
       let i; while ((i = buf.indexOf("\n")) >= 0) { const l = buf.slice(0, i).trim(); buf = buf.slice(i + 1); if (!l) continue;
-        const j = JSON.parse(l); if (j.error) throw new Error(j.error); if (j.delta) { full += j.delta; out.textContent = full; log.scrollTop = log.scrollHeight; } if (j.upsell) { const u = document.createElement("div"); u.className = "dc-bubble a"; u.innerHTML = "<strong>" + j.upsell.title + "</strong><br>" + j.upsell.body + " <a href=\"" + j.upsell.url + "\">Voir les plans →</a>"; log.appendChild(u); log.scrollTop = log.scrollHeight; } } }
+        const j = JSON.parse(l); if (j.error) throw new Error(j.error); if (j.delta) { full += j.delta; setBubbleText(out, full); log.scrollTop = log.scrollHeight; } if (j.upsell) { const u = document.createElement("div"); u.className = "dc-bubble a"; u.innerHTML = "<strong>" + j.upsell.title + "</strong><br>" + j.upsell.body + " <a href=\"" + j.upsell.url + "\">Voir les plans →</a>"; log.appendChild(u); log.scrollTop = log.scrollHeight; } } }
     history.push({ role: "user", content: text }, { role: "assistant", content: full }); image = null; $("imgn").textContent = ""; $("img").value = ""; $("imgx").style.display = "none";
     log.scrollTop = log.scrollHeight;
   } catch (er) { out.remove(); $("err").textContent = er.message; if (er.status === 401) { DC.clear(); location.replace("./auth.html?mode=login"); } if (er.status === 402) $("err").innerHTML = er.message + ' <a href="./pricing.html">Voir les plans</a>'; }
