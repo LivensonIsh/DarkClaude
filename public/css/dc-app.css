@@ -41,42 +41,58 @@ details.dc-faq[open] summary::after{content:"–"}
 details.dc-faq p{margin:10px 0 0;color:#a9c9b8}
 .dc-plan-card{display:flex;flex-direction:column}
 
-/* ===== Correctif définitif : mise en page du chat (prioritaire, toujours en vigueur) ===== */
-html, body { overflow-x: hidden; }
-body.dc-chat { display: flex !important; flex-direction: column !important; height: 100dvh !important; max-height: 100dvh !important; overflow: hidden !important; }
-.dc-chatlog { flex: 1 1 auto !important; min-height: 0 !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch; }
-.dc-compose { flex: 0 0 auto !important; }
-.dc-bubble { max-height: none !important; height: auto !important; }
-.dc-bubble p { margin: 0 0 10px; }
-.dc-bubble p:last-child { margin-bottom: 0; }
-.dc-bubble ul, .dc-bubble ol { margin: 0 0 10px; padding-left: 22px; }
-.dc-bubble strong { color: #eafff4; }
-.dc-bubble code { background: rgba(0,255,136,.12); padding: 1px 5px; border-radius: 4px; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: .9em; }
-.dc-code { margin: 10px 0; border-radius: 10px; overflow: hidden; border: 1px solid #14402a; background: #020805; }
-.dc-code__bar { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: #06100b; border-bottom: 1px solid #14402a; font-size: .72rem; color: #7fa793; font-family: "JetBrains Mono", ui-monospace, monospace; }
-.dc-code__copy { background: none; border: 1px solid rgba(0,255,136,.3); color: #3bff96; border-radius: 6px; padding: 2px 8px; font-size: .7rem; cursor: pointer; }
-.dc-code__copy:hover { background: rgba(0,255,136,.1); }
-.dc-code pre { margin: 0; padding: 12px 14px; overflow-x: auto; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: .85rem; line-height: 1.5; color: #c8f5df; }
-.dc-bubble__copy { position: absolute; top: 8px; right: 10px; background: none; border: 1px solid rgba(0,255,136,.25); color: #7fa793; border-radius: 6px; padding: 2px 8px; font-size: .7rem; cursor: pointer; }
-.dc-bubble__copy:hover { color: #3bff96; border-color: rgba(0,255,136,.5); }
-.dc-bubble.a { position: relative; padding-top: 34px; }
+/* DarkClaude — correctif mobile du chat (bloc unique, ne pas dupliquer) */
+body.dc-chat {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
 
-/* ===== Correctif définitif : mise en page du chat (prioritaire, toujours en vigueur) ===== */
-html, body { overflow-x: hidden; }
-body.dc-chat { display: flex !important; flex-direction: column !important; height: 100dvh !important; max-height: 100dvh !important; overflow: hidden !important; }
-.dc-chatlog { flex: 1 1 auto !important; min-height: 0 !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch; }
-.dc-compose { flex: 0 0 auto !important; }
-.dc-bubble { max-height: none !important; height: auto !important; }
-.dc-bubble p { margin: 0 0 10px; }
-.dc-bubble p:last-child { margin-bottom: 0; }
-.dc-bubble ul, .dc-bubble ol { margin: 0 0 10px; padding-left: 22px; }
-.dc-bubble strong { color: #eafff4; }
-.dc-bubble code { background: rgba(0,255,136,.12); padding: 1px 5px; border-radius: 4px; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: .9em; }
-.dc-code { margin: 10px 0; border-radius: 10px; overflow: hidden; border: 1px solid #14402a; background: #020805; }
-.dc-code__bar { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: #06100b; border-bottom: 1px solid #14402a; font-size: .72rem; color: #7fa793; font-family: "JetBrains Mono", ui-monospace, monospace; }
-.dc-code__copy { background: none; border: 1px solid rgba(0,255,136,.3); color: #3bff96; border-radius: 6px; padding: 2px 8px; font-size: .7rem; cursor: pointer; }
-.dc-code__copy:hover { background: rgba(0,255,136,.1); }
-.dc-code pre { margin: 0; padding: 12px 14px; overflow-x: auto; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: .85rem; line-height: 1.5; color: #c8f5df; }
-.dc-bubble__copy { position: absolute; top: 8px; right: 10px; background: none; border: 1px solid rgba(0,255,136,.25); color: #7fa793; border-radius: 6px; padding: 2px 8px; font-size: .7rem; cursor: pointer; }
-.dc-bubble__copy:hover { color: #3bff96; border-color: rgba(0,255,136,.5); }
-.dc-bubble.a { position: relative; padding-top: 34px; }
+.dc-chatlog {
+  display: flex !important;
+  flex: 1 1 0 !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  min-height: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+.dc-bubble {
+  position: relative;
+  flex: 0 0 auto !important;
+  box-sizing: border-box !important;
+  width: fit-content;
+  max-width: 92% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: 0 !important;
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
+}
+
+.dc-bubble pre,
+.dc-code {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.dc-bubble pre code,
+.dc-code code {
+  white-space: pre;
+}
+
+.dc-compose {
+  position: relative;
+  flex: 0 0 auto !important;
+  min-width: 0;
+  box-sizing: border-box;
+}

@@ -108,7 +108,7 @@ $("f").onsubmit = async (e) => {
   e.preventDefault(); if (busy) return; const text = $("m").value.trim(); if (!text && !image) return;
   busy = true; $("go").disabled = true; $("err").textContent = "";
   bubble("u", text || "(image)"); $("m").value = ""; $("m").style.height = "auto";
-  const out = bubble("a", "…"); let full = "";
+  const out = bubble("a", "…"); let full = ""; let pendingText = ""; let rafScheduled = false;
   const body = { message: text, mode: $("mode").value, lang: localStorage.getItem("darkclaude_lang") || "fr", stream: true, history: history.slice(-24), conversation_id: convId };
   if (image) body.images = [image];
   try {
@@ -118,7 +118,8 @@ $("f").onsubmit = async (e) => {
     const rd = r.body.getReader(), dec = new TextDecoder(); let buf = "";
     for (;;) { const { done, value } = await rd.read(); if (done) break; buf += dec.decode(value, { stream: true });
       let i; while ((i = buf.indexOf("\n")) >= 0) { const l = buf.slice(0, i).trim(); buf = buf.slice(i + 1); if (!l) continue;
-        const j = JSON.parse(l); if (j.error) throw new Error(j.error); if (j.delta) { full += j.delta; setBubbleText(out, full); log.scrollTop = log.scrollHeight; } if (j.upsell) { const u = document.createElement("div"); u.className = "dc-bubble a"; u.innerHTML = "<strong>" + j.upsell.title + "</strong><br>" + j.upsell.body + " <a href=\"" + j.upsell.url + "\">Voir les plans →</a>"; log.appendChild(u); log.scrollTop = log.scrollHeight; } } }
+        const j = JSON.parse(l); if (j.error) throw new Error(j.error); if (j.delta) { full += j.delta; pendingText = full;
+      if (!rafScheduled) { rafScheduled = true; requestAnimationFrame(() => { rafScheduled = false; setBubbleText(out, pendingText); log.scrollTop = log.scrollHeight; }); } } if (j.upsell) { const u = document.createElement("div"); u.className = "dc-bubble a"; u.innerHTML = "<strong>" + j.upsell.title + "</strong><br>" + j.upsell.body + " <a href=\"" + j.upsell.url + "\">Voir les plans →</a>"; log.appendChild(u); log.scrollTop = log.scrollHeight; } } }
     history.push({ role: "user", content: text }, { role: "assistant", content: full }); image = null; $("imgn").textContent = ""; $("img").value = ""; $("imgx").style.display = "none";
     log.scrollTop = log.scrollHeight;
   } catch (er) { out.remove(); $("err").textContent = er.message; if (er.status === 401) { DC.clear(); location.replace("./auth.html?mode=login"); } if (er.status === 402) $("err").innerHTML = er.message + ' <a href="./pricing.html">Voir les plans</a>'; }
